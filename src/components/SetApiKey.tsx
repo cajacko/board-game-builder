@@ -27,9 +27,6 @@ function SetApiKey() {
 
   return (
     <>
-      {!!savedKey && (
-        <button onClick={() => dispatch(actions.route.goBack())}>Back</button>
-      )}
       <form
         className={classes.root}
         noValidate

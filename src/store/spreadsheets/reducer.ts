@@ -3,12 +3,15 @@ import * as actions from "./actions";
 import { SpreadsheetsState, Spreadsheet } from "./types";
 
 const initialSheet: Spreadsheet | null =
-  process.env.INITIAL_SPREADSHEET_ID && process.env.INITIAL_SPREADSHEET_TITLE
+  process.env.REACT_APP_INITIAL_SPREADSHEET_ID &&
+  process.env.REACT_APP_INITIAL_SPREADSHEET_TITLE
     ? {
-        id: process.env.INITIAL_SPREADSHEET_ID,
-        title: process.env.INITIAL_SPREADSHEET_TITLE,
+        id: process.env.REACT_APP_INITIAL_SPREADSHEET_ID,
+        title: process.env.REACT_APP_INITIAL_SPREADSHEET_TITLE,
         dateCreated: new Date().getTime(),
-        dateLastOpened: null
+        dateLastOpened: null,
+        data: null,
+        lastFetchedData: null
       }
     : null;
 
@@ -27,7 +30,9 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         id,
         title,
         dateCreated: time,
-        dateLastOpened: null
+        dateLastOpened: null,
+        data: null,
+        lastFetchedData: null
       }
     })
   )
@@ -37,6 +42,17 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
     delete newState[title];
 
     return newState;
-  });
+  })
+  .handleAction(
+    actions.setSpreadsheetData,
+    (state, { payload: { data, time, title } }) => ({
+      ...state,
+      [title]: {
+        ...state[title],
+        data: data,
+        lastFetchedData: time
+      }
+    })
+  );
 
 export default reducer;
