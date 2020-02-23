@@ -20,16 +20,27 @@ export interface Sheet {
   rowCount: number;
 }
 
+export interface ExtendedSheet extends Sheet {
+  filter?: string;
+}
+
 export type SpreadsheetData = Sheet[];
 
-export interface Spreadsheet {
+export type ExtendedSpreadsheetData = ExtendedSheet[];
+
+export interface Spreadsheet<S = SpreadsheetData> {
   id: string;
   title: string;
   dateCreated: number;
   dateLastOpened: number | null;
-  data: null | SpreadsheetData;
+  data: null | S;
   lastFetchedData: number | null;
+  filters: {
+    [key: string]: string;
+  };
 }
+
+export type ExtendedSpreadsheet = Spreadsheet<ExtendedSpreadsheetData>;
 
 export interface SpreadsheetsState {
   [key: string]: Spreadsheet;

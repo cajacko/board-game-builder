@@ -92,3 +92,9 @@ export const setSpreadsheetData = createAction(
   time: number;
   title: string;
 }>();
+
+export const setFilter = createAction("SET_FILTER")<{
+  filter: string;
+  spreadsheetTitle: string;
+  sheetTitle: string;
+}>();

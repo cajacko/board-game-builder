@@ -26,18 +26,3 @@ declare module "react-redux" {
     TDispatch = Dispatch<ActionType<typeof import("./actions").default>>
   >(): TDispatch;
 }
-
-declare module "reselect" {
-  type S = StateType<typeof import("./reducers").default>;
-
-  export function createSelector<R1, T>(
-    selector: Selector<S, R1>,
-    combiner: (res: R1) => T
-  ): OutputSelector<S, T, (res: R1) => T>;
-
-  export function createSelector<R1, R2, T>(
-    selector1: Selector<S, R1>,
-    selector2: Selector<S, R2>,
-    combiner: (res1: R1, res2: R2) => T
-  ): OutputSelector<S, T, (res1: R1, res2: R2) => T>;
-}

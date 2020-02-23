@@ -1,4 +1,4 @@
-import { Spreadsheet } from "../spreadsheets/types";
+import { ExtendedSpreadsheet } from "../spreadsheets/types";
 export interface ActiveSpreadSheet {
   title: string;
   activeSheet: string | null;
@@ -7,5 +7,5 @@ export interface ActiveSpreadSheet {
 export type ActiveSpreadSheetState = ActiveSpreadSheet | null;
 
 export type FullActiveSpreadSheet =
-  | (Spreadsheet & ActiveSpreadSheetState)
+  | (ExtendedSpreadsheet & ActiveSpreadSheetState)
   | null;

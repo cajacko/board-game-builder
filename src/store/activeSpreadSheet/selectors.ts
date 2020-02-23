@@ -1,8 +1,10 @@
 import { createSelector } from "reselect";
+import ReduxTypes from "ReduxTypes";
 import { ActiveSpreadSheetState, FullActiveSpreadSheet } from "./types";
-import { SpreadsheetsState, Sheet } from "../spreadsheets/types";
+import { SpreadsheetsState, ExtendedSheet } from "../spreadsheets/types";
 
 export const activeSpreadsheetSelector = createSelector<
+  ReduxTypes.RootState,
   ActiveSpreadSheetState,
   SpreadsheetsState,
   FullActiveSpreadSheet
@@ -16,14 +18,24 @@ export const activeSpreadsheetSelector = createSelector<
 
     if (!spreadsheet) return null;
 
-    return {
+    const mergedSpreadsheet = {
       ...activeSpreadsheet,
       ...spreadsheet
     };
+
+    if (mergedSpreadsheet.data) {
+      mergedSpreadsheet.data = mergedSpreadsheet.data.map(sheet => ({
+        ...sheet,
+        filter: spreadsheet.filters[sheet.title]
+      }));
+    }
+
+    return mergedSpreadsheet;
   }
 );
 
 export const sheetsSelector = createSelector<
+  ReduxTypes.RootState,
   FullActiveSpreadSheet,
   string[] | null
 >(activeSpreadsheetSelector, spreadsheet =>
@@ -33,8 +45,9 @@ export const sheetsSelector = createSelector<
 );
 
 export const sheetSelector = createSelector<
+  ReduxTypes.RootState,
   FullActiveSpreadSheet,
-  Sheet | null
+  ExtendedSheet | null
 >(activeSpreadsheetSelector, spreadsheet => {
   if (!spreadsheet) return null;
   if (!spreadsheet.data) return null;

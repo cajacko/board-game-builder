@@ -11,7 +11,8 @@ const initialSheet: Spreadsheet | null =
         dateCreated: new Date().getTime(),
         dateLastOpened: null,
         data: null,
-        lastFetchedData: null
+        lastFetchedData: null,
+        filters: {}
       }
     : null;
 
@@ -32,7 +33,8 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         dateCreated: time,
         dateLastOpened: null,
         data: null,
-        lastFetchedData: null
+        lastFetchedData: null,
+        filters: {}
       }
     })
   )
@@ -53,6 +55,24 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         lastFetchedData: time
       }
     })
+  )
+  .handleAction(
+    actions.setFilter,
+    (
+      state,
+      { payload: { filter, spreadsheetTitle, sheetTitle } }
+    ): SpreadsheetsState => {
+      return {
+        ...state,
+        [spreadsheetTitle]: {
+          ...state[spreadsheetTitle],
+          filters: {
+            ...state[spreadsheetTitle].filters,
+            [sheetTitle]: filter
+          }
+        }
+      };
+    }
   );
 
 export default reducer;
