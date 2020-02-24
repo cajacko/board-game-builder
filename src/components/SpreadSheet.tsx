@@ -1,13 +1,14 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { sheetsSelector } from "../store/activeSpreadSheet/selectors";
-import actions from "../store/actions";
+import { useSelector } from "react-redux";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import { sheetsSelector } from "../store/spreadsheets/selectors";
 import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
 
 function SpreadSheet() {
-  const sheets = useSelector(sheetsSelector);
-  const dispatch = useDispatch();
+  const match = useRouteMatch<{ spreadsheetId: string }>();
+  const sheets = useSelector(state => sheetsSelector(state, match));
   const status = useFetchSpreadSheet();
+  const history = useHistory();
 
   return (
     <div>
@@ -17,10 +18,11 @@ function SpreadSheet() {
           sheets.map(title => (
             <li key={title}>
               <button
-                onClick={() => {
-                  dispatch(actions.activeSpreadSheet.setActiveSheet({ title }));
-                  dispatch(actions.route.setRoute({ route: "SHEET" }));
-                }}
+                onClick={() =>
+                  history.push(
+                    `/spreadsheet/${match.params.spreadsheetId}/sheet/${title}`
+                  )
+                }
               >
                 {title}
               </button>

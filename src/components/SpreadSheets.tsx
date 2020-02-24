@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { useHistory } from "react-router-dom";
 import { spreadsheetsSelector } from "../store/spreadsheets/selectors";
 import actions from "../store/actions";
 
@@ -21,6 +22,7 @@ function SpreadSheets() {
   const dispatch = useDispatch();
   const [title, setTitle] = React.useState("");
   const [id, setId] = React.useState("");
+  const history = useHistory();
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,19 +61,9 @@ function SpreadSheets() {
           {spreadsheets.map(spreadsheet => (
             <li key={spreadsheet.title}>
               <button
-                onClick={() => {
-                  dispatch(
-                    actions.activeSpreadSheet.setActiveSpreadSheet({
-                      title: spreadsheet.title
-                    })
-                  );
-
-                  dispatch(
-                    actions.route.setRoute({
-                      route: "SPREADSHEET"
-                    })
-                  );
-                }}
+                onClick={() =>
+                  history.push(`/spreadsheet/${spreadsheet.title}`)
+                }
               >
                 {spreadsheet.title}
               </button>

@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { sheetSelector } from "../store/activeSpreadSheet/selectors";
+import { useRouteMatch } from "react-router-dom";
+import { sheetSelector } from "../store/spreadsheets/selectors";
 import { filterRows } from "../store/spreadsheets/selectors";
 import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
 import Table from "@material-ui/core/Table";
@@ -24,24 +25,25 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Sheet() {
-  const sheet = useSelector(sheetSelector);
-  const spreadsheetTitle = useSelector(state => state.activeSpreadSheet?.title);
+  const match = useRouteMatch<{ spreadsheetId: string; sheetId: string }>();
+  const spreadsheetId = match.params.spreadsheetId;
+  const sheet = useSelector(state => sheetSelector(state, match));
   const status = useFetchSpreadSheet();
-  const [filter, setFilter] = React.useState("");
-  const dispatch = useDispatch();
   const filterInUse = sheet?.filter || null;
+  const [filter, setFilter] = React.useState(filterInUse || "");
+  const dispatch = useDispatch();
 
   const classes = useStyles();
 
   const applyFilter = () => {
     if (!sheet) return;
-    if (!spreadsheetTitle) return;
+    if (!spreadsheetId) return;
 
     dispatch(
       actions.spreadsheets.setFilter({
         filter,
         sheetTitle: sheet.title,
-        spreadsheetTitle
+        spreadsheetTitle: spreadsheetId
       })
     );
   };

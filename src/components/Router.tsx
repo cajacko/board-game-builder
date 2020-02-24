@@ -1,35 +1,47 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import routes from "../config/routes";
-import actions from "../store/actions";
+import { useSelector } from "react-redux";
+import {
+  Route,
+  RouteComponentProps,
+  useHistory,
+  useRouteMatch,
+  Switch
+} from "react-router-dom";
+import routes, { setApiKeyRoute } from "../config/routes";
 
 function Router() {
   const googleApiKey = useSelector(({ googleApiKey }) => googleApiKey);
-  let route = useSelector(({ route }) => route.activeRoute);
-  let hasHistory = useSelector(({ route }) => route.history.length);
-  const dispatch = useDispatch();
+  const history = useHistory();
+  const match = useRouteMatch();
+
+  const hasHistory = !!history.length;
+  const route = match.path;
 
   const hasApiKey = !!googleApiKey;
 
-  if (!hasApiKey) route = "SET_API_KEY";
-
-  const Component = route ? routes[route] : routes[""];
+  if (!hasApiKey && setApiKeyRoute.component) {
+    const Component = setApiKeyRoute.component;
+    // @ts-ignore
+    const props: RouteComponentProps = {};
+    return <Component {...props} />;
+  }
 
   return (
     <>
       {!!hasHistory && hasApiKey && (
-        <button onClick={() => dispatch(actions.route.goBack())}>Back</button>
+        <button onClick={() => history.goBack()}>Back</button>
       )}
-      {route !== "SET_API_KEY" && (
-        <button
-          onClick={() =>
-            dispatch(actions.route.setRoute({ route: "SET_API_KEY" }))
-          }
-        >
+
+      {route !== "/set-api-key" && (
+        <button onClick={() => history.push("/set-api-key")}>
           Reset Api Key
         </button>
       )}
-      <Component />
+      <Switch>
+        {routes.map(route => (
+          <Route {...route} />
+        ))}
+      </Switch>
     </>
   );
 }

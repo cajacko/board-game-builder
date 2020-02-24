@@ -1,11 +1,15 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { activeSpreadsheetSelector } from "../store/activeSpreadSheet/selectors";
+import { useRouteMatch } from "react-router-dom";
 import actions from "../store/actions";
+import { activeSpreadsheetSelector } from "../store/spreadsheets/selectors";
 
 function useFetchSpreadSheet() {
+  const match = useRouteMatch();
   const [status, setStatus] = React.useState("Fetching");
-  const spreadsheet = useSelector(activeSpreadsheetSelector);
+  const spreadsheet = useSelector(state =>
+    activeSpreadsheetSelector(state, match)
+  );
   const apiKey = useSelector(state => state.googleApiKey);
   const dispatch = useDispatch();
 
