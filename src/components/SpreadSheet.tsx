@@ -20,7 +20,7 @@ function SpreadSheet() {
               <button
                 onClick={() =>
                   history.push(
-                    `/spreadsheet/${match.params.spreadsheetId}/sheet/${title}`
+                    `/spreadsheet/${match.params.spreadsheetId}/sheet/${title}/table`
                   )
                 }
               >

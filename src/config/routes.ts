@@ -18,8 +18,8 @@ export const setApiKeyRoute: ExtendedRouteProps = {
 const routes: ExtendedRouteProps[] = [
   {
     component: Sheet,
-    path: "/spreadsheet/:spreadsheetId/sheet/:sheetId",
-    key: "/spreadsheet/:spreadsheetId/sheet/:sheetId",
+    path: "/spreadsheet/:spreadsheetId/sheet/:sheetId/:sheetView",
+    key: "/spreadsheet/:spreadsheetId/sheet/:sheetId/:sheetView",
     exact: true
   },
   {

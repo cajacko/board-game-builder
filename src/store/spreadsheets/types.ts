@@ -1,4 +1,4 @@
-type Value = string | number | boolean | undefined;
+export type Value = string | number | boolean | undefined;
 export interface RawSpreadsheetData {
   sheets: Array<{
     properties: {
