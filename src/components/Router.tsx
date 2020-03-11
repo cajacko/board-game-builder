@@ -8,15 +8,7 @@ import {
   Switch
 } from "react-router-dom";
 import routes, { setApiKeyRoute } from "../config/routes";
-import { send } from "../utils/ipcRenderer";
 import getIsPrintLayout from "../utils/getIsPrintLayout";
-import mmToPx from '../utils/mmToPx';
-
-// In mm. This is the A4 size for my printer
-const maxPrintSize = {
-  width: 201,
-  height: 288
-}
 
 function Router() {
   const googleApiKey = useSelector(({ googleApiKey }) => googleApiKey);
@@ -37,10 +29,6 @@ function Router() {
     return <Component {...props} />;
   }
 
-  function screenshot() {
-    send("SCREENSHOT", { height: mmToPx(maxPrintSize.height), width: mmToPx(maxPrintSize.width), x: 0, y: 0 });
-  }
-
   return (
     <>
       {!isPrintLayout && (
@@ -54,7 +42,6 @@ function Router() {
               Reset Api Key
             </button>
           )}
-          <button onClick={screenshot}>Screenshot</button>
         </>
       )}
       <Switch>
