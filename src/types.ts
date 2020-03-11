@@ -20,7 +20,8 @@ export type CREATE_WINDOW = Action<
 export type SEND_ACTION_TO_WINDOW = Action<
   "SEND_ACTION_TO_WINDOW",
   {
-    type: any;
+    windowId: string | null;
+    type: string;
     payload: any;
   }
 >;
@@ -46,9 +47,12 @@ export type WindowActions =
   | SCREENSHOT
   | DESTROY_WINDOW;
 
-export type MainActions =
-  | Action<"DISPATCH_REDUX_ACTION">
-  | Action<"EXAMPLE", { test: boolean }>;
+export type DISPATCH_REDUX_ACTION = Action<
+  "DISPATCH_REDUX_ACTION",
+  { windowId: string | null; action: any }
+>;
+
+export type MainActions = DISPATCH_REDUX_ACTION;
 
 export type AllActions = WindowActions | MainActions;
 
@@ -75,7 +79,7 @@ export interface ResponseMessageSuccess<A extends AllActions>
 export interface ResponseMessageError<A extends AllActions>
   extends ResponseMessage<A> {
   status: "ERROR";
-  error: Error;
+  error: string;
 }
 
 export type ResponseMessages<A extends AllActions = AllActions> =
@@ -88,7 +92,7 @@ export type Messages<A extends AllActions = AllActions> =
 
 export type RequestCallback<A extends AllActions = AllActions> = (
   message: RequestMessage<A>
-) => Promise<A["response"]>;
+) => Promise<A["response"]> | void;
 
 export type ResponseCallback<A extends AllActions = AllActions> = (
   message: ResponseMessages<A>

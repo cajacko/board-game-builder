@@ -16,5 +16,7 @@ callAndReceive.setUpListener(
     // @ts-ignore
     window.ipcRenderer.on &&
     // @ts-ignore
-    ((...args) => window.ipcRenderer.on(...args))
+    ((...args) => window.ipcRenderer.on(...args)),
+  // @ts-ignore
+  window.ipcRenderer && window.ipcRenderer.send
 );

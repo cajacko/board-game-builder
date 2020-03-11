@@ -5,9 +5,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import { BrowserRouter } from "react-router-dom";
 import { store, persistor } from "../store";
 import Router from "./Router";
-import { call } from "../utils/mainProcess";
-import * as Types from "../types";
-import windowId from "../config/windowId";
 
 const Global = createGlobalStyle`
   html, body {
@@ -22,15 +19,6 @@ const Global = createGlobalStyle`
 `;
 
 function App() {
-  React.useEffect(() => {
-    setTimeout(() => {
-      call<Types.APP_RENDERED>("APP_RENDERED", { windowId }).catch(
-        console.error
-      );
-      // Need timeout as content isn't always painted
-    }, 500);
-  }, []);
-
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

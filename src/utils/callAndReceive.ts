@@ -5,10 +5,11 @@ const callsAwaitingResponse: Types.CallsAwaitingResponse = {};
 const receiveCallbacks: Types.ReceiveCallbacks = {};
 
 export function setUpListener<A extends Types.AllActions = Types.AllActions>(
-  on?: Types.On,
-  send?: Types.Send
+  on: Types.On,
+  send: Types.Send
 ) {
   if (!on) return;
+  if (!send) return;
 
   on("MESSAGE", (event, args) => {
     const message = JSON.parse(args) as Types.Messages<A>;
@@ -16,22 +17,31 @@ export function setUpListener<A extends Types.AllActions = Types.AllActions>(
     console.log("RECEIVE MESSAGE", message);
 
     if (message.messageType === "RESPONSE") {
-      Object.keys(callsAwaitingResponse).forEach(actionId => {
-        if (message.actionId !== actionId) return;
+      Object.keys(callsAwaitingResponse).some(actionId => {
+        if (message.actionId !== actionId) return false;
 
         const callback = callsAwaitingResponse[actionId];
 
         const shouldDelete = callback(message);
 
-        if (shouldDelete) delete callsAwaitingResponse[actionId];
+        if (shouldDelete) {
+          delete callsAwaitingResponse[actionId];
+          return true;
+        }
+
+        return false;
       });
     } else {
-      Object.keys(receiveCallbacks).forEach(type => {
-        if (type !== message.type) return;
-        if (!receiveCallbacks[type]) return;
+      Object.keys(receiveCallbacks).some(type => {
+        if (type !== message.type) return false;
+        if (!receiveCallbacks[type]) return false;
 
-        Object.values(receiveCallbacks[type]).forEach(callback => {
-          callback(message)
+        return Object.values(receiveCallbacks[type]).some(callback => {
+          const promise = callback(message);
+
+          if (!promise) return false;
+
+          promise
             .then<Types.ResponseMessageSuccess<A>>(
               (responsePayload: A["response"]) => ({
                 ...message,
@@ -43,17 +53,15 @@ export function setUpListener<A extends Types.AllActions = Types.AllActions>(
             .catch<Types.ResponseMessageError<A>>((error: Error) => ({
               ...message,
               status: "ERROR",
-              error,
+              error: error.message || "Undefined Error",
               messageType: "RESPONSE"
             }))
             .then(responseMessage => {
-              const reply = event.reply || send;
-
-              if (!reply) throw new Error("Could not reply");
-
               console.log("REPLY MESSAGE", responseMessage);
-              reply("MESSAGE", JSON.stringify(responseMessage));
+              send("MESSAGE", JSON.stringify(responseMessage));
             });
+
+          return true;
         });
       });
     }

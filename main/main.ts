@@ -32,14 +32,7 @@ function createWindow() {
 
   win.loadURL(mainUrl);
 
-  callAndReceive.setUpListener((...args) => {
-    // @ts-ignore
-    ipcMain.on(...args);
-  });
-
-  const receive = callAndReceive.getReceive();
-
-  const call = callAndReceive.getCall((type, arg) => {
+  function send(type: string, arg: string) {
     function callWin(individualWin: BrowserWindow) {
       individualWin.webContents.send(type, arg);
     }
@@ -57,7 +50,16 @@ function createWindow() {
 
       callWin(individualWin);
     });
-  });
+  }
+
+  callAndReceive.setUpListener((...args) => {
+    // @ts-ignore
+    ipcMain.on(...args);
+  }, send);
+
+  const receive = callAndReceive.getReceive();
+
+  const call = callAndReceive.getCall(send);
 
   const interval = setInterval(() => {
     if (show) {

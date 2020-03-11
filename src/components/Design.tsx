@@ -8,6 +8,8 @@ import getIsPrintLayout from "../utils/getIsPrintLayout";
 import { v4 as uuidv4 } from "uuid";
 import { call } from "../utils/mainProcess";
 import * as Types from "../types";
+import dispatchActionToWindow from "../utils/dispatchActionToWindow";
+import actions from "../store/actions";
 
 // In mm. This is the A4 size for my printer
 const maxPrintSize = {
@@ -79,7 +81,7 @@ function Table({ headings, rows, component: Component }: Props) {
   const [showCount, setShowCount] = React.useState<number>(
     allMappedRows.length
   );
-  const [offset, setOffset] = React.useState<number>(0);
+  const [offset] = React.useState<number>(0);
   const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   const onlyShowVisible = getIsPrintLayout();
 
@@ -111,12 +113,19 @@ function Table({ headings, rows, component: Component }: Props) {
       windowId,
       height,
       width,
-      show: false,
+      show: true,
       url: window.location.href
     })
-      .then(() => {
-        console.log("yay");
-      })
+      .then(() =>
+        dispatchActionToWindow(
+          windowId,
+          actions.spreadsheets.setFilter({
+            filter: "!!data['Effect'] && data['Effect'].includes('Draw')",
+            sheetTitle: "Gadget Cards",
+            spreadsheetTitle: "Zero to Hero"
+          })
+        )
+      )
       .then(() =>
         call<Types.SCREENSHOT>("SCREENSHOT", {
           windowId,
