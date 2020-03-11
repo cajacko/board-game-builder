@@ -11,7 +11,7 @@ import Table from "./Table";
 import Design from "./Design";
 import actions from "../store/actions";
 import component from "../designs/Card";
-import getIsPrintLayout from "../utils/getIsPrintLayout";
+import NoPrint from "../components/NoPrint";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,7 +35,6 @@ function Sheet() {
   const [filter, setFilter] = React.useState(filterInUse || "");
   const dispatch = useDispatch();
   const history = useHistory();
-  const isPrintLayout = getIsPrintLayout();
 
   const classes = useStyles();
 
@@ -57,49 +56,47 @@ function Sheet() {
 
   return (
     <>
-      {!isPrintLayout && (
-        <>
-          <p>SpreadSheet {status}</p>
-          <button
-            onClick={() =>
-              history.push(
-                `/spreadsheet/${match.params.spreadsheetId}/sheet/${
-                  match.params.sheetId
-                }/${isTable ? "design" : "table"}`
-              )
-            }
-          >
-            {isTable ? "Show Design" : "Show Table"}
-          </button>
-        </>
-      )}
+      <NoPrint>
+        <p>SpreadSheet {status}</p>
+        <button
+          onClick={() =>
+            history.push(
+              `/spreadsheet/${match.params.spreadsheetId}/sheet/${
+                match.params.sheetId
+              }/${isTable ? "design" : "table"}`
+            )
+          }
+        >
+          {isTable ? "Show Design" : "Show Table"}
+        </button>
+      </NoPrint>
+
       {sheet && (
         <>
-          {!isPrintLayout && (
-            <>
-              <p>
-                Filter by typing stuff like: "data['Column 1 Heading'] > 3 &&
-                !!data['Column 2 Heading']"
-              </p>
-              <form
-                className={classes.root}
-                noValidate
-                autoComplete="off"
-                onSubmit={applyFilter}
-              >
-                <TextField
-                  id="filter"
-                  label="Filter"
-                  value={filter}
-                  onChange={e => setFilter(e.target.value)}
-                />
-                <Button variant="contained" onClick={applyFilter}>
-                  Save
-                </Button>
-              </form>
-              <p>{sheet.title}</p>
-            </>
-          )}
+          <NoPrint>
+            <p>
+              Filter by typing stuff like: "data['Column 1 Heading'] > 3 &&
+              !!data['Column 2 Heading']"
+            </p>
+            <form
+              className={classes.root}
+              noValidate
+              autoComplete="off"
+              onSubmit={applyFilter}
+            >
+              <TextField
+                id="filter"
+                label="Filter"
+                value={filter}
+                onChange={e => setFilter(e.target.value)}
+              />
+              <Button variant="contained" onClick={applyFilter}>
+                Save
+              </Button>
+            </form>
+            <p>{sheet.title}</p>
+          </NoPrint>
+
           {isTable ? (
             <Table rows={rows.rows} headings={sheet.headings} />
           ) : (

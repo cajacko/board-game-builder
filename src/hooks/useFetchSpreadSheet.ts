@@ -5,6 +5,7 @@ import actions from "../store/actions";
 import { activeSpreadsheetSelector } from "../store/spreadsheets/selectors";
 
 function useFetchSpreadSheet() {
+  const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
   const match = useRouteMatch();
   const [status, setStatus] = React.useState("Fetching");
   const spreadsheet = useSelector(state =>
@@ -14,6 +15,8 @@ function useFetchSpreadSheet() {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
+    if (isPrintWindow) return;
+
     if (!spreadsheet) {
       console.error(new Error("No id"));
       setStatus("Error");
@@ -25,6 +28,8 @@ function useFetchSpreadSheet() {
     fetch(url)
       .then(response => response.json())
       .then(res => {
+        if (isPrintWindow) return;
+
         if (res && res.error) throw new Error("Error from server");
         if (!spreadsheet) {
           console.error(new Error("No id"));

@@ -1,15 +1,17 @@
 import React from "react";
 import { createSelector } from "reselect";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Value } from "../store/spreadsheets/types";
 import { Props as DesignProps } from "../designs/types";
 import mmToPx from "../utils/mmToPx";
-import getIsPrintLayout from "../utils/getIsPrintLayout";
 import { v4 as uuidv4 } from "uuid";
 import { call } from "../utils/mainProcess";
 import * as Types from "../types";
 import dispatchActionToWindow from "../utils/dispatchActionToWindow";
 import actions from "../store/actions";
+import NoPrint from "../components/NoPrint";
+import windowId from "../config/windowId";
 
 // In mm. This is the A4 size for my printer
 const maxPrintSize = {
@@ -75,33 +77,79 @@ function getVisibleCount(children: HTMLCollection) {
   return children.length;
 }
 
+let startedSaving = false;
+
 function Table({ headings, rows, component: Component }: Props) {
   const allMappedRows = mappedRowSelector(rows, headings);
-
-  const [showCount, setShowCount] = React.useState<number>(
+  const printSettings = useSelector(({ printSettings }) => printSettings);
+  const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
+  const [start, setStart] = React.useState(0);
+  const [visibleCount, setVisibleCount] = React.useState<number>(
     allMappedRows.length
   );
-  const [offset] = React.useState<number>(0);
+
   const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
-  const onlyShowVisible = getIsPrintLayout();
+  const onlyShowVisible = isPrintWindow;
 
   React.useEffect(() => {
     if (!onlyShowVisible) return;
     if (!ref.current) return;
 
-    const visibleCount = getVisibleCount(ref.current.children);
+    if (onlyShowVisible) setVisibleCount(getVisibleCount(ref.current.children));
+  }, [setVisibleCount, onlyShowVisible, ref]);
 
-    console.log({ visibleCount });
+  React.useEffect(() => {
+    if (!printSettings) return;
+    if (startedSaving) return;
 
-    if (onlyShowVisible) setShowCount(visibleCount);
-  }, [setShowCount, onlyShowVisible, ref]);
+    startedSaving = true;
+
+    console.log("START THIS TRAIN");
+
+    let s = 0;
+
+    function loop(): Promise<void> {
+      let e = s + visibleCount;
+
+      if (s > allMappedRows.length) return Promise.resolve();
+
+      return new Promise(resolve => setTimeout(resolve, 500))
+        .then(() => {
+          if (!windowId) return Promise.resolve();
+          if (!printSettings) return Promise.resolve();
+
+          call<Types.SCREENSHOT>("SCREENSHOT", {
+            windowId,
+            height: printSettings.height,
+            width: printSettings.width,
+            x: 0,
+            y: 0,
+            filename: `${s + 1}-${e}`
+          });
+        })
+        .then(() => {
+          s = e;
+          setStart(e);
+
+          return new Promise(resolve => setTimeout(resolve, 500));
+        })
+        .then(loop);
+    }
+
+    loop().then(() => {
+      if (!windowId) return Promise.resolve();
+
+      return call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId });
+    });
+  }, [printSettings, setStart, visibleCount, allMappedRows.length]);
 
   if (!Component) return <p>No Component</p>;
 
-  const end =
-    onlyShowVisible && showCount !== null ? offset + showCount : undefined;
+  let visibleMappedRows = allMappedRows;
 
-  const visibleMappedRows = allMappedRows.slice(offset, end);
+  if (printSettings && visibleCount) {
+    visibleMappedRows = allMappedRows.slice(start, start + visibleCount);
+  }
 
   function screenshot() {
     const windowId = uuidv4();
@@ -113,39 +161,64 @@ function Table({ headings, rows, component: Component }: Props) {
       windowId,
       height,
       width,
-      show: true,
+      show: false,
+      // show: true,
       url: window.location.href
     })
       .then(() =>
         dispatchActionToWindow(
           windowId,
-          actions.spreadsheets.setFilter({
-            filter: "!!data['Effect'] && data['Effect'].includes('Draw')",
-            sheetTitle: "Gadget Cards",
-            spreadsheetTitle: "Zero to Hero"
+          actions.isPrintWindow.setIsPrintWindow({
+            isPrintWindow: true
           })
         )
       )
       .then(() =>
-        call<Types.SCREENSHOT>("SCREENSHOT", {
+        dispatchActionToWindow(
           windowId,
-          height,
-          width,
-          x: 0,
-          y: 0,
-          filename: `${offset}-${end}`
-        })
-      )
-      .catch(e => {
-        console.log("oh no", e);
-      });
-    // .then(() => call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId }));
+          actions.printSettings.setPrintSettings({
+            height,
+            width
+          })
+        )
+      );
+
+    // if (!printSettings) return;
+
+    // call<Types.CREATE_WINDOW>("CREATE_WINDOW", {
+    //   windowId,
+    //   height,
+    //   width,
+    //   show: false,
+    //   url: window.location.href
+    // })
+    //   .then(() =>
+    //     dispatchActionToWindow(
+    //       windowId,
+    //       actions.isPrintWindow.setIsPrintWindow({
+    //         isPrintWindow: true
+    //       })
+    //     )
+    //   )
+    //   .then(() =>
+    //     call<Types.SCREENSHOT>("SCREENSHOT", {
+    //       windowId,
+    //       height,
+    //       width,
+    //       x: 0,
+    //       y: 0,
+    //       filename: `${printSettings.start}-${printSettings.end}`
+    //     })
+    //   )
+    //   .then(() => call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId }));
   }
 
   return (
     <>
-      <button onClick={screenshot}>Screenshot</button>
-      {visibleMappedRows.length === 0 && <div>No Items</div>}
+      <NoPrint>
+        <button onClick={screenshot}>Screenshot</button>
+        {visibleMappedRows.length === 0 && <div>No Items</div>}
+      </NoPrint>
       <Container className="print" ref={ref}>
         {visibleMappedRows.map((row, i) => (
           <React.Fragment key={i}>

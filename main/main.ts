@@ -14,7 +14,8 @@ const backgroundWindows: {
 } = {};
 
 function createWindow() {
-  let show = false;
+  let show = true;
+  // TODO: Fix the show on launch thing
 
   // Create the browser window.
   const win = new BrowserWindow({
@@ -34,6 +35,9 @@ function createWindow() {
 
   function send(type: string, arg: string) {
     function callWin(individualWin: BrowserWindow) {
+      if (individualWin.isDestroyed()) return;
+      if (!individualWin.webContents) return;
+
       individualWin.webContents.send(type, arg);
     }
 
@@ -42,7 +46,7 @@ function createWindow() {
     Object.keys(backgroundWindows).forEach(windowId => {
       const individualWin = backgroundWindows[windowId];
 
-      if (!individualWin.webContents) {
+      if (!individualWin.webContents || individualWin.isDestroyed()) {
         if (individualWin.destroy) individualWin.destroy();
         delete backgroundWindows[windowId];
         return;
@@ -105,6 +109,10 @@ function createWindow() {
 
       backgroundWindows[payload.windowId] = newWin;
 
+      newWin.on("close", () => {
+        delete backgroundWindows[payload.windowId];
+      });
+
       return new Promise(resolve => {
         resolveWindowsReady[payload.windowId] = resolve;
       });
@@ -163,7 +171,8 @@ function createWindow() {
 
   receive<Types.SEND_ACTION_TO_WINDOW>(
     "SEND_ACTION_TO_WINDOW",
-    ({ requestPayload }) => call(requestPayload.type, requestPayload.payload)
+    ({ requestPayload }: any) =>
+      call(requestPayload.type, requestPayload.payload)
   );
 
   receive<Types.DESTROY_WINDOW>(

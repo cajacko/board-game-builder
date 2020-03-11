@@ -11,7 +11,8 @@ import { call } from "../utils/mainProcess";
 
 const persistConfig = {
   key: "root",
-  storage
+  storage,
+  blacklist: ["isPrintWindow", "printSettings"]
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -52,7 +53,8 @@ receive<Types.DISPATCH_REDUX_ACTION>(
 
     store.dispatch(requestPayload.action);
 
-    return Promise.resolve();
+    // Gives time to rerender before we move on
+    return new Promise(resolve => setTimeout(resolve, 200));
   }
 );
 

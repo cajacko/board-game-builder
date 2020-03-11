@@ -8,14 +8,12 @@ import {
   Switch
 } from "react-router-dom";
 import routes, { setApiKeyRoute } from "../config/routes";
-import getIsPrintLayout from "../utils/getIsPrintLayout";
+import NoPrint from "../components/NoPrint";
 
 function Router() {
   const googleApiKey = useSelector(({ googleApiKey }) => googleApiKey);
   const history = useHistory();
   const match = useRouteMatch();
-
-  const isPrintLayout = getIsPrintLayout();
 
   const hasHistory = !!history.length;
   const route = match.path;
@@ -31,19 +29,17 @@ function Router() {
 
   return (
     <>
-      {!isPrintLayout && (
-        <>
-          {!!hasHistory && hasApiKey && (
-            <button onClick={() => history.goBack()}>Back</button>
-          )}
+      <NoPrint>
+        {!!hasHistory && hasApiKey && (
+          <button onClick={() => history.goBack()}>Back</button>
+        )}
 
-          {route !== "/set-api-key" && (
-            <button onClick={() => history.push("/set-api-key")}>
-              Reset Api Key
-            </button>
-          )}
-        </>
-      )}
+        {route !== "/set-api-key" && (
+          <button onClick={() => history.push("/set-api-key")}>
+            Reset Api Key
+          </button>
+        )}
+      </NoPrint>
       <Switch>
         {routes.map(route => (
           <Route {...route} />

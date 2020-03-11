@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"electron .\"",
+    "start": "yarn tsc && concurrently \"react-scripts start\" \"electron .\" \"yarn tsc --watch\"",
+    "tsc": "tsc --build tsconfig.electron.json",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
