@@ -14,13 +14,14 @@ const backgroundWindows: {
 } = {};
 
 function createWindow() {
-  let show = true;
-  // TODO: Fix the show on launch thing
+  let show = false;
 
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    x: 0,
+    y: 0,
+    width: 1400,
+    height: 2000,
     webPreferences: {
       nodeIntegration: true
     },
@@ -71,7 +72,7 @@ function createWindow() {
     } else {
       win.reload();
     }
-  }, 500);
+  }, 2000);
 
   const resolveWindowsReady: { [key: string]: () => void } = {};
 
