@@ -13,7 +13,7 @@ const initialSheet: Spreadsheet | null =
         data: null,
         lastFetchedData: null,
         filters: {},
-        componentMapping: {}
+        designMap: {}
       }
     : null;
 
@@ -36,7 +36,7 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         data: null,
         lastFetchedData: null,
         filters: {},
-        componentMapping: {}
+        designMap: {}
       }
     })
   )
@@ -71,6 +71,27 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
           filters: {
             ...state[spreadsheetTitle].filters,
             [sheetTitle]: filter
+          }
+        }
+      };
+    }
+  )
+  .handleAction(
+    actions.setDesign,
+    (
+      state,
+      { payload: { component, spreadsheetTitle, sheetTitle } }
+    ): SpreadsheetsState => {
+      return {
+        ...state,
+        [spreadsheetTitle]: {
+          ...state[spreadsheetTitle],
+          designMap: {
+            ...state[spreadsheetTitle].designMap,
+            [sheetTitle]: {
+              component: component,
+              columnMapping: []
+            }
           }
         }
       };

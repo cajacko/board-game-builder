@@ -9,7 +9,6 @@ import {
 } from "react-router-dom";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Link from "@material-ui/core/Link";
-import Typography from "@material-ui/core/Typography";
 import routes, { setApiKeyRoute } from "../config/routes";
 import NoPrint from "../components/NoPrint";
 

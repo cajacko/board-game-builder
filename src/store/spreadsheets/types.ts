@@ -22,14 +22,14 @@ export interface Sheet {
   rowCount: number;
 }
 
-interface ComponentMap {
-  component: keyof typeof designs;
+interface DesignMap {
+  component: string;
   columnMapping: number[];
 }
 
 export interface ExtendedSheet extends Sheet {
   filter?: string;
-  componentMapping?: ComponentMap;
+  designMap?: DesignMap;
 }
 
 export type SpreadsheetData = Sheet[];
@@ -46,8 +46,8 @@ export interface Spreadsheet<S = SpreadsheetData> {
   filters: {
     [key: string]: string;
   };
-  componentMapping: {
-    [sheetTitle: string]: ComponentMap;
+  designMap: {
+    [sheetTitle: string]: DesignMap;
   };
 }
 

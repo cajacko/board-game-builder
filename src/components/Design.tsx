@@ -3,6 +3,7 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Value } from "../store/spreadsheets/types";
+import { DesignComponent } from "../designs";
 import { Props as DesignProps } from "../designs/types";
 import mmToPx from "../utils/mmToPx";
 import { v4 as uuidv4 } from "uuid";
@@ -22,7 +23,7 @@ const maxPrintSize = {
 interface Props {
   headings: Value[];
   rows: Value[][];
-  component: React.ComponentType<DesignProps> | null;
+  component: DesignComponent | null;
 }
 
 const mappedRowSelector = createSelector<

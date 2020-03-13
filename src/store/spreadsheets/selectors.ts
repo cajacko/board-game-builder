@@ -94,7 +94,7 @@ export const activeSpreadsheetSelector = createSelector<
       mergedSpreadsheet.data = mergedSpreadsheet.data.map(sheet => ({
         ...sheet,
         filter: spreadsheet.filters[sheet.title],
-        componentMapping: spreadsheet.componentMapping[sheet.title]
+        designMap: spreadsheet.designMap[sheet.title]
       }));
     }
 

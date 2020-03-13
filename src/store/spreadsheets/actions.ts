@@ -113,3 +113,9 @@ export const setFilter = createAction("SET_FILTER")<{
   spreadsheetTitle: string;
   sheetTitle: string;
 }>();
+
+export const setDesign = createAction("SET_DESIGN")<{
+  component: string;
+  spreadsheetTitle: string;
+  sheetTitle: string;
+}>();
