@@ -53,6 +53,8 @@ const mappedRowSelector = createSelector<
 
 const Container = styled.div`
   font-family: helvetica, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
 
   * {
     margin: 0;
@@ -79,7 +81,7 @@ function getVisibleCount(children: HTMLCollection) {
 
 let startedSaving = false;
 
-function Table({ headings, rows, component: Component }: Props) {
+function Design({ headings, rows, component: Component }: Props) {
   const allMappedRows = mappedRowSelector(rows, headings);
   const printSettings = useSelector(({ printSettings }) => printSettings);
   const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
@@ -182,35 +184,6 @@ function Table({ headings, rows, component: Component }: Props) {
           })
         )
       );
-
-    // if (!printSettings) return;
-
-    // call<Types.CREATE_WINDOW>("CREATE_WINDOW", {
-    //   windowId,
-    //   height,
-    //   width,
-    //   show: false,
-    //   url: window.location.href
-    // })
-    //   .then(() =>
-    //     dispatchActionToWindow(
-    //       windowId,
-    //       actions.isPrintWindow.setIsPrintWindow({
-    //         isPrintWindow: true
-    //       })
-    //     )
-    //   )
-    //   .then(() =>
-    //     call<Types.SCREENSHOT>("SCREENSHOT", {
-    //       windowId,
-    //       height,
-    //       width,
-    //       x: 0,
-    //       y: 0,
-    //       filename: `${printSettings.start}-${printSettings.end}`
-    //     })
-    //   )
-    //   .then(() => call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId }));
   }
 
   return (
@@ -230,4 +203,4 @@ function Table({ headings, rows, component: Component }: Props) {
   );
 }
 
-export default Table;
+export default Design;

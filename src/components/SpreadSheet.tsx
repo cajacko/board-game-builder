@@ -13,6 +13,8 @@ function SpreadSheet() {
   return (
     <div>
       SpreadSheet {status}
+      {status === "Error" &&
+        "Make sure you enabled sharing. File -> Share -> Advanced -> Anyone with Link"}
       <ul>
         {sheets &&
           sheets.map(title => (

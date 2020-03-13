@@ -1,3 +1,5 @@
+import designs from "../../designs";
+
 export type Value = string | number | boolean | undefined;
 export interface RawSpreadsheetData {
   sheets: Array<{
@@ -5,8 +7,8 @@ export interface RawSpreadsheetData {
       title: string;
     };
     data: Array<{
-      rowData: Array<{
-        values: Array<{ formattedValue?: string }>;
+      rowData?: Array<{
+        values?: Array<{ formattedValue?: string }>;
       }>;
     }>;
   }>;
@@ -20,8 +22,14 @@ export interface Sheet {
   rowCount: number;
 }
 
+interface ComponentMap {
+  component: keyof typeof designs;
+  columnMapping: number[];
+}
+
 export interface ExtendedSheet extends Sheet {
   filter?: string;
+  componentMapping?: ComponentMap;
 }
 
 export type SpreadsheetData = Sheet[];
@@ -37,6 +45,9 @@ export interface Spreadsheet<S = SpreadsheetData> {
   lastFetchedData: number | null;
   filters: {
     [key: string]: string;
+  };
+  componentMapping: {
+    [sheetTitle: string]: ComponentMap;
   };
 }
 

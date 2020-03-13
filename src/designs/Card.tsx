@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import times from "lodash/times";
 import { Props } from "./types";
-import PokerCard from "./PokerCard";
+import PokerCardSquare from "./PokerCardSquare";
 
 const border = "0.3mm solid black";
 const contentPadding = 2;
@@ -14,16 +14,17 @@ const Header = styled.div`
   height: ${headerHeight}mm;
   box-sizing: border-box;
   background-color: #c5d4d8;
+  display: flex;
 `;
 
 const Content = styled.div<{ height: number }>`
-  height: ${({ height }) => height - headerHeight - footerHeight}mm;
   box-sizing: border-box;
   padding: ${contentPadding * 2}mm;
-  display: table-cell;
-  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: white;
-  text-align: center;
+  flex: 1;
 `;
 
 const Footer = styled.div`
@@ -32,10 +33,10 @@ const Footer = styled.div`
   height: ${footerHeight}mm;
   box-sizing: border-box;
   background-color: #9aaeb3;
+  display: flex;
 `;
 
 const Charge = styled.div`
-  float: right;
   border-left: ${border};
   padding: ${contentPadding}mm;
   height: ${headerHeight}mm;
@@ -44,6 +45,7 @@ const Charge = styled.div`
 
 const Title = styled.div`
   padding: ${contentPadding}mm;
+  flex: 1;
 `;
 
 const ChargeImage = styled.img<{ noMargin: boolean }>`
@@ -93,20 +95,20 @@ function Card(props: Props) {
   );
 
   return (
-    <PokerCard>
+    <PokerCardSquare>
       {({ height }) => (
         <>
           <Header>
-            <Charge>{chargeCost}</Charge>
             <Title>{props.headings["Title"] || "Placeholder"}</Title>
+            {!!chargeCost.length && <Charge>{chargeCost}</Charge>}
           </Header>
           <Content height={height}>
             <span>{props.headings["Effect"] || "No Effect"}</span>
           </Content>
-          <Footer>{gadgetCost}</Footer>
+          {!!gadgetCost && <Footer>{gadgetCost}</Footer>}
         </>
       )}
-    </PokerCard>
+    </PokerCardSquare>
   );
 }
 

@@ -7,7 +7,9 @@ import { activeSpreadsheetSelector } from "../store/spreadsheets/selectors";
 function useFetchSpreadSheet() {
   const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
   const match = useRouteMatch();
-  const [status, setStatus] = React.useState("Fetching");
+  const [status, setStatus] = React.useState<"Fetching" | "Error" | "Success">(
+    "Fetching"
+  );
   const spreadsheet = useSelector(state =>
     activeSpreadsheetSelector(state, match)
   );

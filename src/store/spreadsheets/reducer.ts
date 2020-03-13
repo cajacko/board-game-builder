@@ -12,7 +12,8 @@ const initialSheet: Spreadsheet | null =
         dateLastOpened: null,
         data: null,
         lastFetchedData: null,
-        filters: {}
+        filters: {},
+        componentMapping: {}
       }
     : null;
 
@@ -34,7 +35,8 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         dateLastOpened: null,
         data: null,
         lastFetchedData: null,
-        filters: {}
+        filters: {},
+        componentMapping: {}
       }
     })
   )

@@ -10,7 +10,7 @@ import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
 import Table from "./Table";
 import Design from "./Design";
 import actions from "../store/actions";
-import component from "../designs/Card";
+import component from "../designs/EscapeTheMadHouse/RestrictionCard";
 import NoPrint from "../components/NoPrint";
 
 const useStyles = makeStyles(theme => ({

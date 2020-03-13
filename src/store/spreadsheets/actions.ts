@@ -25,8 +25,21 @@ export const setSpreadsheetData = createAction(
       const filteredData = raw.sheets.map(sheet => {
         let maxColumns = 0;
 
-        const rows = sheet.data[0].rowData
+        const { rowData } = sheet.data[0];
+
+        if (!rowData)
+          return {
+            title: sheet.properties.title,
+            headings: [],
+            rows: [],
+            rowCount: 0,
+            columnCount: 0
+          };
+
+        const rows = rowData
           .filter(row => {
+            if (!row.values) return true;
+
             const isEmptyRow = row.values.every(value => {
               if (!value.formattedValue) return true;
               if (value.formattedValue === "") return true;
@@ -39,6 +52,8 @@ export const setSpreadsheetData = createAction(
             return !isEmptyRow;
           })
           .map(row => {
+            if (!row.values) return [];
+
             if (row.values.length > maxColumns) maxColumns = row.values.length;
 
             return row.values.map((value, i) => {
