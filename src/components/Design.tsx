@@ -139,11 +139,13 @@ function Design({ headings, rows, component: Component }: Props) {
         .then(loop);
     }
 
-    loop().then(() => {
-      if (!windowId) return Promise.resolve();
+    loop()
+      .then(() => call<Types.OPEN_DESKTOP>("OPEN_DESKTOP", undefined))
+      .then(() => {
+        if (!windowId) return Promise.resolve();
 
-      return call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId });
-    });
+        return call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId });
+      });
   }, [printSettings, setStart, visibleCount, allMappedRows.length]);
 
   if (!Component) return <p>No Component</p>;

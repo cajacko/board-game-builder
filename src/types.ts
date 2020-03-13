@@ -17,6 +17,8 @@ export type CREATE_WINDOW = Action<
   }
 >;
 
+export type OPEN_DESKTOP = Action<"OPEN_DESKTOP">;
+
 export type SEND_ACTION_TO_WINDOW = Action<
   "SEND_ACTION_TO_WINDOW",
   {
@@ -45,7 +47,8 @@ export type WindowActions =
   | CREATE_WINDOW
   | SEND_ACTION_TO_WINDOW
   | SCREENSHOT
-  | DESTROY_WINDOW;
+  | DESTROY_WINDOW
+  | OPEN_DESKTOP;
 
 export type DISPATCH_REDUX_ACTION = Action<
   "DISPATCH_REDUX_ACTION",

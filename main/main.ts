@@ -1,6 +1,6 @@
 import * as Types from "../src/types";
 import * as callAndReceive from "../src/utils/callAndReceive";
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import * as fs from "fs";
 import { join } from "path";
 import * as queryString from "query-string";
@@ -137,6 +137,11 @@ function createWindow() {
       return Promise.resolve();
     }
   );
+
+  receive<Types.OPEN_DESKTOP>("OPEN_DESKTOP", () => {
+    shell.openItem(app.getPath("desktop"));
+    return Promise.resolve();
+  });
 
   receive<Types.SCREENSHOT>(
     "SCREENSHOT",
