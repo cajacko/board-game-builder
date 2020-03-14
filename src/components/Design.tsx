@@ -2,6 +2,7 @@ import React from "react";
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import Button from "@material-ui/core/Button";
 import { Value } from "../store/spreadsheets/types";
 import { DesignComponent } from "../designs";
 import { Props as DesignProps } from "../designs/types";
@@ -192,7 +193,13 @@ function Design({ headings, rows, component: Component }: Props) {
   return (
     <>
       <NoPrint>
-        <button onClick={screenshot}>Screenshot</button>
+        <Button
+          onClick={screenshot}
+          variant="contained"
+          style={{ marginBottom: 20, marginTop: 20 }}
+        >
+          Save as Images
+        </Button>
         {visibleMappedRows.length === 0 && <div>No Items</div>}
       </NoPrint>
       <Container className="print" ref={ref}>

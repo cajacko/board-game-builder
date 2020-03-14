@@ -1,8 +1,27 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+import styled from "styled-components";
 import { sheetsSelector } from "../store/spreadsheets/selectors";
 import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
+import Status from "./Status";
+
+const Container = styled.div`
+  padding: 20px;
+  position: relative;
+`;
+
+const Sheet = styled.button`
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+  width: 200px;
+  text-align: left;
+`;
 
 function SpreadSheet() {
   const match = useRouteMatch<{ spreadsheetId: string }>();
@@ -11,27 +30,29 @@ function SpreadSheet() {
   const history = useHistory();
 
   return (
-    <div>
-      SpreadSheet {status}
-      {status === "Error" &&
-        "Make sure you enabled sharing. File -> Share -> Advanced -> Anyone with Link"}
+    <Container>
+      <Typography variant="h5" component="h2">
+        Sheets
+      </Typography>
+      <Status status={status} />
+
       <ul>
         {sheets &&
           sheets.map(title => (
             <li key={title}>
-              <button
+              <Sheet
                 onClick={() =>
                   history.push(
                     `/spreadsheet/${match.params.spreadsheetId}/sheet/${title}/table`
                   )
                 }
               >
-                {title}
-              </button>
+                <Typography>{title}</Typography>
+              </Sheet>
             </li>
           ))}
       </ul>
-    </div>
+    </Container>
   );
 }
 

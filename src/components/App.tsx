@@ -13,9 +13,7 @@ const Global = createGlobalStyle`
     margin: 0;
   }
 
-  body {
-    -webkit-print-color-adjust: exact !important;
-  }
+  
 `;
 
 function App() {
