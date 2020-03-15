@@ -64,4 +64,16 @@ function RoomCardBack(props: Props) {
   );
 }
 
-export default RoomCardBack;
+export default {
+  component: RoomCardBack,
+  expectedColumnOrder: [
+    "*",
+    "successHealth",
+    "successRestriction",
+    "failHealth",
+    "failRestriction",
+    "critHealth",
+    "critRestriction",
+    "isExitCard"
+  ]
+};

@@ -96,6 +96,33 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         }
       };
     }
+  )
+  .handleAction(
+    actions.setColumnMap,
+    (
+      state,
+      { payload: { sheetColumn, expectedColumn, spreadsheetTitle, sheetTitle } }
+    ): SpreadsheetsState => {
+      const columnMapping = state[spreadsheetTitle].designMap[
+        sheetTitle
+      ].columnMapping.slice();
+
+      columnMapping[expectedColumn] = sheetColumn;
+
+      return {
+        ...state,
+        [spreadsheetTitle]: {
+          ...state[spreadsheetTitle],
+          designMap: {
+            ...state[spreadsheetTitle].designMap,
+            [sheetTitle]: {
+              ...state[spreadsheetTitle].designMap[sheetTitle],
+              columnMapping
+            }
+          }
+        }
+      };
+    }
   );
 
 export default reducer;

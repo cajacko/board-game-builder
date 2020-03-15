@@ -4,8 +4,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import { Value } from "../store/spreadsheets/types";
-import { DesignComponent } from "../designs";
-import { Props as DesignProps } from "../designs/types";
+import { Props as DesignProps, DesignComponent } from "../designs/types";
 import mmToPx from "../utils/mmToPx";
 import { v4 as uuidv4 } from "uuid";
 import { call } from "../utils/mainProcess";
@@ -24,7 +23,9 @@ const maxPrintSize = {
 interface Props {
   headings: Value[];
   rows: Value[][];
-  component: DesignComponent | null;
+  component: DesignComponent["component"] | null;
+  columnMapping?: number[];
+  expectedColumnorder: string[] | null;
 }
 
 const mappedRowSelector = createSelector<
@@ -83,7 +84,13 @@ function getVisibleCount(children: HTMLCollection) {
 
 let startedSaving = false;
 
-function Design({ headings, rows, component: Component }: Props) {
+function Design({
+  headings,
+  rows,
+  component: Component,
+  columnMapping,
+  expectedColumnorder
+}: Props) {
   const allMappedRows = mappedRowSelector(rows, headings);
   const printSettings = useSelector(({ printSettings }) => printSettings);
   const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
@@ -189,6 +196,29 @@ function Design({ headings, rows, component: Component }: Props) {
         )
       );
   }
+
+  // TODO: selector for this
+  visibleMappedRows = visibleMappedRows.map(row => {
+    if (!expectedColumnorder) return row;
+    if (!columnMapping) return row;
+
+    let columns: Value[] = [];
+
+    columns = expectedColumnorder.map((title, i) => {
+      const map = columnMapping[i];
+
+      if (typeof map !== "number") return row.columns[i];
+
+      return row.columns[map];
+    });
+
+    return {
+      ...row,
+      columns
+    };
+  });
+
+  console.log(visibleMappedRows[0]);
 
   return (
     <>

@@ -38,7 +38,7 @@ function Card(props: Props) {
           <Text>{props.columns[0]}</Text>
         </Block>
         <Block>
-          <Label>Success Reaction</Label>
+          <Label>Critical Failure Reaction</Label>
           <Text>{props.columns[1]}</Text>
         </Block>
       </Container>
@@ -46,4 +46,7 @@ function Card(props: Props) {
   );
 }
 
-export default Card;
+export default {
+  component: Card,
+  expectedColumnOrder: ["Success Reaction", "Critical Failure Reaction"]
+};

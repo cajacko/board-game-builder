@@ -119,3 +119,10 @@ export const setDesign = createAction("SET_DESIGN")<{
   spreadsheetTitle: string;
   sheetTitle: string;
 }>();
+
+export const setColumnMap = createAction("SET_COLUMN_MAP")<{
+  sheetColumn: number;
+  expectedColumn: number;
+  spreadsheetTitle: string;
+  sheetTitle: string;
+}>();

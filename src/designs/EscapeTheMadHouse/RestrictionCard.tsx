@@ -4,7 +4,7 @@ import PokerCard from "../PokerCard";
 import { Container, Block } from "./Personality";
 import { Label, Text } from "./RoomCardBack";
 
-function RoomCardBack(props: Props) {
+function RestrictionCard(props: Props) {
   return (
     <PokerCard>
       <Container style={{ backgroundColor: "#FCFF7F" }}>
@@ -17,4 +17,7 @@ function RoomCardBack(props: Props) {
   );
 }
 
-export default RoomCardBack;
+export default {
+  component: RestrictionCard,
+  expectedColumnOrder: ["Restriction Text"]
+};

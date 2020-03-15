@@ -9,12 +9,16 @@ import { sheetSelector } from "../store/spreadsheets/selectors";
 import { filterRows } from "../store/spreadsheets/selectors";
 import { ExtendedSheet } from "../store/spreadsheets/types";
 import SaveIcon from "@material-ui/icons/Save";
+import Button from "@material-ui/core/Button";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import ChangeIcon from "@material-ui/icons/Sync";
 import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
 import Table from "./Table";
 import Design from "./Design";
 import actions from "../store/actions";
-import designs, { Designs, DesignComponent } from "../designs";
+import designs from "../designs";
+import { Designs, DesignComponent } from "../designs/types";
 import NoPrint from "../components/NoPrint";
 import Status from "./Status";
 import IconButton from "./IconButton";
@@ -109,6 +113,7 @@ function Sheet() {
   const history = useHistory();
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
+  const [mappingOpen, setMappingOpen] = React.useState(false);
   const classes = useStyles();
 
   const handleOpen = () => {
@@ -117,6 +122,14 @@ function Sheet() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleMappingOpen = () => {
+    setMappingOpen(true);
+  };
+
+  const handleMappingClose = () => {
+    setMappingOpen(false);
   };
 
   const applyDesign = (design: string) => () => {
@@ -130,6 +143,20 @@ function Sheet() {
         component: design,
         sheetTitle: sheet.title,
         spreadsheetTitle: spreadsheetId
+      })
+    );
+  };
+
+  const applyColumnMap = (i: number) => (e: React.ChangeEvent<any>) => {
+    if (!sheet) return;
+    if (!spreadsheetId) return;
+
+    dispatch(
+      actions.spreadsheets.setColumnMap({
+        sheetTitle: sheet.title,
+        spreadsheetTitle: spreadsheetId,
+        expectedColumn: i,
+        sheetColumn: parseInt(e.target.value, 10)
       })
     );
   };
@@ -155,7 +182,7 @@ function Sheet() {
     const parts = componentName.split(".");
     const design = get(designs, parts, null) as DesignComponent | undefined;
 
-    if (typeof design === "function") {
+    if (design && typeof design.component === "function") {
       component = design;
     }
   }
@@ -167,9 +194,10 @@ function Sheet() {
       const nextParent = parent ? `${parent}.${key}` : key;
       const design = items[key];
 
-      if (typeof design === "function") {
+      if (design.component && typeof design.component === "function") {
         components.push(nextParent);
       } else {
+        // @ts-ignore
         loop(design, nextParent);
       }
     });
@@ -179,6 +207,10 @@ function Sheet() {
 
   const rows = sheet ? filterRows(sheet, filterInUse || "") : { rows: [] };
   const isTable = match.params.sheetView === "table";
+
+  const columnMapping =
+    sheet && sheet.designMap && sheet.designMap.columnMapping;
+  const headings = sheet && sheet.headings;
 
   return (
     <Container hasPadding={!isPrintWindow}>
@@ -243,11 +275,23 @@ function Sheet() {
                     <ChangeIcon />
                   </IconButton>
                 </ComponentTitle>
+
+                {component && (
+                  <Button
+                    onClick={handleMappingOpen}
+                    variant="contained"
+                    style={{ marginRight: 20 }}
+                  >
+                    Set Mapping
+                  </Button>
+                )}
               </NoPrint>
               <Design
                 rows={rows.rows}
                 headings={sheet.headings}
-                component={component}
+                columnMapping={sheet.designMap && sheet.designMap.columnMapping}
+                component={component && component.component}
+                expectedColumnorder={component && component.expectedColumnOrder}
               />
               <Modal
                 aria-labelledby="simple-modal-title"
@@ -267,6 +311,44 @@ function Sheet() {
                   </ul>
                 </div>
               </Modal>
+              {component && columnMapping && headings && (
+                <Modal
+                  aria-labelledby="simple-modal-title"
+                  aria-describedby="simple-modal-description"
+                  open={mappingOpen}
+                  onClose={handleMappingClose}
+                >
+                  <div style={modalStyle} className={classes.paper}>
+                    <ul>
+                      {component.expectedColumnOrder.map((text, i) => (
+                        <li key={text} style={{ marginBottom: 10 }}>
+                          <div style={{ display: "flex" }}>
+                            <Typography style={{ flex: 1 }} variant="caption">
+                              {text}
+                            </Typography>
+
+                            <Select
+                              value={
+                                typeof columnMapping[i] === "number"
+                                  ? columnMapping[i]
+                                  : i
+                              }
+                              onChange={applyColumnMap(i)}
+                              style={{ width: 200 }}
+                            >
+                              {headings.map((heading, j) => (
+                                <MenuItem key={j} value={j}>
+                                  {j} - {heading}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Modal>
+              )}
             </>
           )}
         </>
