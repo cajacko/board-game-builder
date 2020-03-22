@@ -58,6 +58,9 @@ const Container = styled.div`
   font-family: helvetica, sans-serif;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 
   * {
     margin: 0;
