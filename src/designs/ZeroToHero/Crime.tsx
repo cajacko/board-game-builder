@@ -225,7 +225,8 @@ function Card(props: Props) {
                 <Value
                   style={{
                     marginLeft: `-${valueMargin}mm`,
-                    backgroundColor: "#EF5350"
+                    backgroundColor: "#EF5350",
+                    opacity: typeof threat !== "number" ? 0 : 1
                   }}
                 >
                   {threat}
