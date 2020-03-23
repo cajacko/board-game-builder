@@ -93,8 +93,14 @@ function createWindow() {
         webPreferences: {
           nodeIntegration: true
         },
-        show: !!payload.show
+        show: false
       });
+
+      newWin.showInactive();
+
+      if (!payload.show) {
+        newWin.hide();
+      }
 
       newWin.setContentBounds({
         height: payload.height,
