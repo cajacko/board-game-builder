@@ -134,7 +134,7 @@ function Design({
 
       if (s > allMappedRows.length) return Promise.resolve();
 
-      return new Promise(resolve => setTimeout(resolve, 500))
+      return new Promise(resolve => setTimeout(resolve, 1000))
         .then(() => {
           if (!windowId) return Promise.resolve();
           if (!printSettings) return Promise.resolve();
