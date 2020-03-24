@@ -17,7 +17,7 @@ export type CREATE_WINDOW = Action<
   }
 >;
 
-export type OPEN_DESKTOP = Action<"OPEN_DESKTOP">;
+export type OPEN_DIR = Action<"OPEN_DIR", { directory: string }>;
 
 export type SEND_ACTION_TO_WINDOW = Action<
   "SEND_ACTION_TO_WINDOW",
@@ -37,6 +37,7 @@ export type SCREENSHOT = Action<
     x: number;
     y: number;
     filename: string;
+    directory: string;
   }
 >;
 
@@ -48,7 +49,7 @@ export type WindowActions =
   | SEND_ACTION_TO_WINDOW
   | SCREENSHOT
   | DESTROY_WINDOW
-  | OPEN_DESKTOP;
+  | OPEN_DIR;
 
 export type DISPATCH_REDUX_ACTION = Action<
   "DISPATCH_REDUX_ACTION",

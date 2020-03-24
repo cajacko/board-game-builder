@@ -26,6 +26,7 @@ interface Props {
   component: DesignComponent["component"] | null;
   columnMapping?: number[];
   expectedColumnorder: string[] | null;
+  dir: string;
 }
 
 const mappedRowSelector = createSelector<
@@ -88,6 +89,7 @@ function getVisibleCount(children: HTMLCollection) {
 let startedSaving = false;
 
 function Design({
+  dir,
   headings,
   rows,
   component: Component,
@@ -138,7 +140,8 @@ function Design({
             width: printSettings.width,
             x: 0,
             y: 0,
-            filename: `${s + 1}-${e}`
+            filename: `${s + 1}-${e}`,
+            directory: dir
           });
         })
         .then(() => {
@@ -151,13 +154,13 @@ function Design({
     }
 
     loop()
-      .then(() => call<Types.OPEN_DESKTOP>("OPEN_DESKTOP", undefined))
+      .then(() => call<Types.OPEN_DIR>("OPEN_DIR", { directory: dir }))
       .then(() => {
         if (!windowId) return Promise.resolve();
 
         return call<Types.DESTROY_WINDOW>("DESTROY_WINDOW", { windowId });
       });
-  }, [printSettings, setStart, visibleCount, allMappedRows.length]);
+  }, [printSettings, setStart, visibleCount, allMappedRows.length, dir]);
 
   if (!Component) return <p>No Component</p>;
 

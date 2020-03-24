@@ -24,6 +24,7 @@ import Status from "./Status";
 import IconButton from "./IconButton";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
+import { join } from "path";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -131,6 +132,8 @@ function Sheet() {
   const handleMappingClose = () => {
     setMappingOpen(false);
   };
+
+  const dir = spreadsheetId && sheet ? join(spreadsheetId, sheet.title) : "./";
 
   const applyQuantityColumn = (e: React.ChangeEvent<any>) => {
     if (!sheet) return;
@@ -323,6 +326,7 @@ function Sheet() {
                 )}
               </NoPrint>
               <Design
+                dir={dir}
                 rows={rows.rows}
                 headings={sheet.headings}
                 columnMapping={sheet.designMap && sheet.designMap.columnMapping}

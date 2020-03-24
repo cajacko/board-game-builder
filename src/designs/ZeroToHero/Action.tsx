@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 const Title = styled.span`
   display: flex;
   height: 14mm;
-  background-color: #ffccbc;
+  background-color: #eceff1;
   align-items: center;
   padding-left: 3mm;
   font-size: 4mm;
@@ -36,7 +36,7 @@ const Container = styled.div`
 `;
 
 const Icons = styled.div`
-  background-color: #ffccbc;
+  background-color: #eceff1;
   display: flex;
   flex-direction: column;
   ${shadow};
@@ -71,7 +71,7 @@ const Set = styled.span`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #fafafa;
+  background-color: #eceff1;
   padding: 1.5mm 3mm;
   text-align: right;
   ${shadow};

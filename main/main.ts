@@ -1,7 +1,7 @@
 import * as Types from "../src/types";
 import * as callAndReceive from "../src/utils/callAndReceive";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import { join } from "path";
 import * as queryString from "query-string";
 
@@ -93,14 +93,9 @@ function createWindow() {
         webPreferences: {
           nodeIntegration: true
         },
-        show: false
+        // Window must not be visible if we want the content bounds to be larger than the computer window
+        show: !!payload.show
       });
-
-      newWin.showInactive();
-
-      if (!payload.show) {
-        newWin.hide();
-      }
 
       newWin.setContentBounds({
         height: payload.height,
@@ -144,14 +139,16 @@ function createWindow() {
     }
   );
 
-  receive<Types.OPEN_DESKTOP>("OPEN_DESKTOP", () => {
-    shell.openItem(app.getPath("desktop"));
+  receive<Types.OPEN_DIR>("OPEN_DIR", ({ requestPayload: { directory } }) => {
+    shell.openItem(join(app.getPath("desktop"), directory));
     return Promise.resolve();
   });
 
   receive<Types.SCREENSHOT>(
     "SCREENSHOT",
-    ({ requestPayload: { height, width, x, y, filename, windowId } }) => {
+    ({
+      requestPayload: { height, width, x, y, filename, windowId, directory }
+    }) => {
       const printWin = backgroundWindows[windowId];
 
       if (!printWin) return Promise.reject();
@@ -160,6 +157,7 @@ function createWindow() {
       return new Promise((resolve, reject) => {
         const path = join(
           app.getPath("desktop"),
+          directory,
           `${filename}.png` || "screenshot.png"
         );
 
@@ -169,13 +167,10 @@ function createWindow() {
           .capturePage({ height, width, x, y })
           .then(image => {
             console.log(image);
-            fs.writeFile(path, image.toPNG(), "binary", function(err) {
-              if (err) {
-                reject(err);
-              } else {
-                resolve();
-              }
-            });
+
+            return fs
+              .ensureFile(path)
+              .then(() => fs.writeFile(path, image.toPNG(), "binary"));
           });
       });
     }
