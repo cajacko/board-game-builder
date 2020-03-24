@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Props } from "../types";
 import PokerCardHex, { height } from "../PokerCardHex";
 
-const Title = styled.span`
+const Title = styled.span<{ villain: boolean }>`
   width: 36mm;
   height: 7mm;
   background-color: white;
@@ -15,7 +15,7 @@ const Title = styled.span`
   position: relative;
   z-index: 4;
   border-radius: 1.5mm;
-  border: 0.4mm solid #b3b3b3;
+  border: 0.4mm solid ${({ villain }) => (villain ? "#EF5350" : "#b3b3b3")};
   box-sizing: border-box;
 `;
 
@@ -44,12 +44,12 @@ const Content = styled.div`
   position: relative;
 `;
 
-const Target = styled.span`
+const Target = styled.span<{ villain: boolean }>`
   height: 10mm;
   width: 10mm;
   display: flex;
   border-radius: 100%;
-  background-color: #546e7a;
+  background-color: ${({ villain }) => (villain ? "#EF5350" : "#546e7a")};
   color: white;
   box-sizing: border-box;
   font-size: 6mm;
@@ -157,7 +157,8 @@ function Card(props: Props) {
     crimeLevel,
     exp,
     threat,
-    hasVictoryPoint
+    hasVictoryPoint,
+    villain
   ] = props.columns;
 
   let borderColor: string;
@@ -210,7 +211,7 @@ function Card(props: Props) {
                     <Victory src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Star_icon_stylized.svg/1024px-Star_icon_stylized.svg.png" />
                   </VictoryContainer>
                 )}
-                <Title>{title || "Crime Title"}</Title>
+                <Title villain={!!villain}>{title || "Crime Title"}</Title>
               </TitleContainer>
               <Values>
                 <Value
@@ -221,7 +222,7 @@ function Card(props: Props) {
                 >
                   {exp}
                 </Value>
-                <Target>{thwartTarget}</Target>
+                <Target villain={!!villain}>{thwartTarget}</Target>
                 <Value
                   style={{
                     marginLeft: `-${valueMargin}mm`,
@@ -233,7 +234,7 @@ function Card(props: Props) {
                 </Value>
               </Values>
               <Values style={{ zIndex: 5 }}>
-                <Target>{thwartTarget}</Target>
+                <Target villain={!!villain}>{thwartTarget}</Target>
               </Values>
             </Content>
           </Side>
@@ -271,6 +272,7 @@ export default {
     "Crime Level",
     "Experience",
     "Threat",
-    "Has Victory Points"
+    "Has Victory Points",
+    "Is Villain"
   ]
 };

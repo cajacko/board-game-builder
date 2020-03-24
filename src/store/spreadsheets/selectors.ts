@@ -23,6 +23,36 @@ export const spreadsheetsSelector = createSelector<
   spreadsheets => Object.values(spreadsheets)
 );
 
+export const rowsWithQuantity = createSelector<
+  ExtendedSheet,
+  ExtendedSheet,
+  ExtendedSheet
+>(
+  sheet => sheet,
+  sheet => {
+    const rows: ExtendedSheet["rows"] = [];
+
+    sheet.rows.forEach(row => {
+      rows.push(row);
+
+      if (!sheet.quantityColumn) return;
+
+      const quantity = row[sheet.quantityColumn];
+
+      if (!quantity) return;
+
+      for (var i = 1; i < quantity; i += 1) {
+        rows.push(row);
+      }
+    });
+
+    return {
+      ...sheet,
+      rows
+    };
+  }
+);
+
 export const filterRows = createSelector<
   Sheet,
   string,
@@ -94,7 +124,8 @@ export const activeSpreadsheetSelector = createSelector<
       mergedSpreadsheet.data = mergedSpreadsheet.data.map(sheet => ({
         ...sheet,
         filter: spreadsheet.filters[sheet.title],
-        designMap: spreadsheet.designMap[sheet.title]
+        designMap: spreadsheet.designMap[sheet.title],
+        quantityColumn: spreadsheet.quantityMap[sheet.title]
       }));
     }
 

@@ -49,7 +49,6 @@ const HexIn2 = styled.div`
   height: 100%;
   background-repeat: no-repeat;
   background-position: 50%;
-  background-color: #0000000a;
   background-size: cover;
   visibility: visible;
   transform: rotate(-60deg);

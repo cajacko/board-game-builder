@@ -13,7 +13,8 @@ const initialSheet: Spreadsheet | null =
         data: null,
         lastFetchedData: null,
         filters: {},
-        designMap: {}
+        designMap: {},
+        quantityMap: {}
       }
     : null;
 
@@ -36,7 +37,8 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         data: null,
         lastFetchedData: null,
         filters: {},
-        designMap: {}
+        designMap: {},
+        quantityMap: {}
       }
     })
   )
@@ -120,6 +122,32 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
               columnMapping
             }
           }
+        }
+      };
+    }
+  )
+  .handleAction(
+    actions.setQuantityColumn,
+    (
+      state,
+      { payload: { sheetColumn, spreadsheetTitle, sheetTitle } }
+    ): SpreadsheetsState => {
+      const quantityMap = Object.assign(
+        {},
+        state[spreadsheetTitle].quantityMap
+      );
+
+      if (!sheetColumn) {
+        delete quantityMap[sheetTitle];
+      } else {
+        quantityMap[sheetTitle] = sheetColumn;
+      }
+
+      return {
+        ...state,
+        [spreadsheetTitle]: {
+          ...state[spreadsheetTitle],
+          quantityMap
         }
       };
     }

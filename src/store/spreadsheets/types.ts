@@ -30,6 +30,7 @@ interface DesignMap {
 export interface ExtendedSheet extends Sheet {
   filter?: string;
   designMap?: DesignMap;
+  quantityColumn?: number;
 }
 
 export type SpreadsheetData = Sheet[];
@@ -48,6 +49,9 @@ export interface Spreadsheet<S = SpreadsheetData> {
   };
   designMap: {
     [sheetTitle: string]: DesignMap;
+  };
+  quantityMap: {
+    [sheetTitle: string]: number;
   };
 }
 

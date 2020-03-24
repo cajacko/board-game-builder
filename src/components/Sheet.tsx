@@ -6,7 +6,7 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import get from "lodash/get";
 import Typography from "@material-ui/core/Typography";
 import { sheetSelector } from "../store/spreadsheets/selectors";
-import { filterRows } from "../store/spreadsheets/selectors";
+import { filterRows, rowsWithQuantity } from "../store/spreadsheets/selectors";
 import { ExtendedSheet } from "../store/spreadsheets/types";
 import SaveIcon from "@material-ui/icons/Save";
 import Button from "@material-ui/core/Button";
@@ -132,6 +132,20 @@ function Sheet() {
     setMappingOpen(false);
   };
 
+  const applyQuantityColumn = (e: React.ChangeEvent<any>) => {
+    if (!sheet) return;
+    if (!spreadsheetId) return;
+
+    dispatch(
+      actions.spreadsheets.setQuantityColumn({
+        sheetColumn:
+          e.target.value === "null" ? null : parseInt(e.target.value, 10),
+        sheetTitle: sheet.title,
+        spreadsheetTitle: spreadsheetId
+      })
+    );
+  };
+
   const applyDesign = (design: string) => () => {
     if (!sheet) return;
     if (!spreadsheetId) return;
@@ -205,7 +219,9 @@ function Sheet() {
 
   loop(designs);
 
-  const rows = sheet ? filterRows(sheet, filterInUse || "") : { rows: [] };
+  const rows = sheet
+    ? filterRows(rowsWithQuantity(sheet), filterInUse || "")
+    : { rows: [] };
   const isTable = match.params.sheetView === "table";
 
   const columnMapping =
@@ -275,6 +291,26 @@ function Sheet() {
                     <ChangeIcon />
                   </IconButton>
                 </ComponentTitle>
+
+                {headings && (
+                  <ComponentTitle>
+                    <Typography variant="h6" component="h2">
+                      Quantity Column:
+                    </Typography>
+                    <Select
+                      value={sheet.quantityColumn || "null"}
+                      onChange={applyQuantityColumn}
+                      style={{ width: 200 }}
+                    >
+                      <MenuItem value="null">None</MenuItem>
+                      {headings.map((heading, i) => (
+                        <MenuItem key={i} value={i}>
+                          {i} - {heading}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </ComponentTitle>
+                )}
 
                 {component && (
                   <Button

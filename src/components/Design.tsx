@@ -221,8 +221,6 @@ function Design({
     };
   });
 
-  console.log(visibleMappedRows[0]);
-
   return (
     <>
       <NoPrint>

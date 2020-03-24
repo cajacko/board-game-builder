@@ -126,3 +126,9 @@ export const setColumnMap = createAction("SET_COLUMN_MAP")<{
   spreadsheetTitle: string;
   sheetTitle: string;
 }>();
+
+export const setQuantityColumn = createAction("SET_QUANTITY_COLUMN")<{
+  sheetColumn: number | null;
+  spreadsheetTitle: string;
+  sheetTitle: string;
+}>();
