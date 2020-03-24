@@ -6,13 +6,19 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import get from "lodash/get";
 import Typography from "@material-ui/core/Typography";
 import { sheetSelector } from "../store/spreadsheets/selectors";
-import { filterRows, rowsWithQuantity } from "../store/spreadsheets/selectors";
+import {
+  filterRows,
+  rowsWithQuantity,
+  rowsWithOption
+} from "../store/spreadsheets/selectors";
 import { ExtendedSheet } from "../store/spreadsheets/types";
 import SaveIcon from "@material-ui/icons/Save";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ChangeIcon from "@material-ui/icons/Sync";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
 import Table from "./Table";
 import Design from "./Design";
@@ -47,7 +53,8 @@ function getModalStyle() {
   return {
     top: `${top}%`,
     left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
+    transform: `translate(-${top}%, -${left}%)`,
+    overflow: "scroll"
   };
 }
 
@@ -222,14 +229,52 @@ function Sheet() {
 
   loop(designs);
 
-  const rows = sheet
-    ? filterRows(rowsWithQuantity(sheet), filterInUse || "")
+  const filteredRows = sheet
+    ? filterRows(sheet, filterInUse || "")
     : { rows: [] };
+
+  const quantityRows = rowsWithQuantity(
+    filteredRows.rows,
+    sheet ? sheet.quantityColumn : undefined
+  );
+
+  const optionRows = rowsWithOption(
+    quantityRows,
+    sheet ? sheet.options : undefined
+  );
+
   const isTable = match.params.sheetView === "table";
 
   const columnMapping =
     sheet && sheet.designMap && sheet.designMap.columnMapping;
   const headings = sheet && sheet.headings;
+
+  console.log("sheet.options", sheet, sheet && sheet.options);
+
+  const handleOptionChange = (option: string, checked: boolean) => () => {
+    if (!sheet) return;
+    if (!spreadsheetId) return;
+
+    let options = sheet.options || [];
+
+    if (checked) {
+      if (options.includes(option)) {
+        return;
+      } else {
+        options.push(option);
+      }
+    } else {
+      options = options.filter(o => o !== option);
+    }
+
+    dispatch(
+      actions.spreadsheets.setOptions({
+        options,
+        spreadsheetTitle: spreadsheetId,
+        sheetTitle: sheet.title
+      })
+    );
+  };
 
   return (
     <Container hasPadding={!isPrintWindow}>
@@ -275,7 +320,7 @@ function Sheet() {
           </NoPrint>
 
           {isTable ? (
-            <Table rows={rows.rows} headings={sheet.headings} />
+            <Table rows={filteredRows.rows} headings={sheet.headings} />
           ) : (
             <>
               <NoPrint>
@@ -315,6 +360,34 @@ function Sheet() {
                   </ComponentTitle>
                 )}
 
+                {component && component.options && (
+                  <ComponentTitle>
+                    <Typography variant="h6" component="h2">
+                      Options:
+                    </Typography>
+                    {component.options.map(option => {
+                      const checked =
+                        !!sheet &&
+                        !!sheet.options &&
+                        sheet.options.includes(option);
+
+                      return (
+                        <FormControlLabel
+                          key={option}
+                          control={
+                            <Checkbox
+                              checked={checked}
+                              onChange={handleOptionChange(option, !checked)}
+                              name={option}
+                            />
+                          }
+                          label={option}
+                        />
+                      );
+                    })}
+                  </ComponentTitle>
+                )}
+
                 {component && (
                   <Button
                     onClick={handleMappingOpen}
@@ -327,7 +400,7 @@ function Sheet() {
               </NoPrint>
               <Design
                 dir={dir}
-                rows={rows.rows}
+                rows={optionRows}
                 headings={sheet.headings}
                 columnMapping={sheet.designMap && sheet.designMap.columnMapping}
                 component={component && component.component}

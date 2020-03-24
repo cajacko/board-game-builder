@@ -132,3 +132,9 @@ export const setQuantityColumn = createAction("SET_QUANTITY_COLUMN")<{
   spreadsheetTitle: string;
   sheetTitle: string;
 }>();
+
+export const setOptions = createAction("SET_OPTIONS")<{
+  options: string[] | null;
+  spreadsheetTitle: string;
+  sheetTitle: string;
+}>();

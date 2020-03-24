@@ -14,7 +14,8 @@ const initialSheet: Spreadsheet | null =
         lastFetchedData: null,
         filters: {},
         designMap: {},
-        quantityMap: {}
+        quantityMap: {},
+        optionsMap: {}
       }
     : null;
 
@@ -38,7 +39,8 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         lastFetchedData: null,
         filters: {},
         designMap: {},
-        quantityMap: {}
+        quantityMap: {},
+        optionsMap: {}
       }
     })
   )
@@ -148,6 +150,29 @@ const reducer = createReducer<SpreadsheetsState>(defaultState)
         [spreadsheetTitle]: {
           ...state[spreadsheetTitle],
           quantityMap
+        }
+      };
+    }
+  )
+  .handleAction(
+    actions.setOptions,
+    (
+      state,
+      { payload: { options, spreadsheetTitle, sheetTitle } }
+    ): SpreadsheetsState => {
+      const optionsMap = Object.assign({}, state[spreadsheetTitle].optionsMap);
+
+      if (!options) {
+        delete optionsMap[sheetTitle];
+      } else {
+        optionsMap[sheetTitle] = options;
+      }
+
+      return {
+        ...state,
+        [spreadsheetTitle]: {
+          ...state[spreadsheetTitle],
+          optionsMap
         }
       };
     }

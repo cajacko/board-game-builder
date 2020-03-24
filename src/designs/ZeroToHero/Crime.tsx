@@ -196,6 +196,7 @@ function Card(props: Props) {
               width: `${height}mm`,
               backgroundImage: `url(${backgroundImage})`,
               backgroundSize: "cover",
+              backgroundPosition: "center",
               bottom: "5mm",
               right: "-5mm"
             }}

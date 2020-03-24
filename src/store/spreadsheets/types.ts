@@ -1,5 +1,3 @@
-import designs from "../../designs";
-
 export type Value = string | number | boolean | undefined;
 export interface RawSpreadsheetData {
   sheets: Array<{
@@ -31,6 +29,7 @@ export interface ExtendedSheet extends Sheet {
   filter?: string;
   designMap?: DesignMap;
   quantityColumn?: number;
+  options?: string[];
 }
 
 export type SpreadsheetData = Sheet[];
@@ -52,6 +51,9 @@ export interface Spreadsheet<S = SpreadsheetData> {
   };
   quantityMap: {
     [sheetTitle: string]: number;
+  };
+  optionsMap: {
+    [sheetTitle: string]: string[];
   };
 }
 

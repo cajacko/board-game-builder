@@ -8,6 +8,7 @@ import {
   ExtendedSpreadsheet,
   ExtendedSheet
 } from "./types";
+import { RowWithOption } from "../../designs/types";
 
 interface RouteMatchParams {
   spreadsheetId?: string;
@@ -24,20 +25,23 @@ export const spreadsheetsSelector = createSelector<
 );
 
 export const rowsWithQuantity = createSelector<
-  ExtendedSheet,
-  ExtendedSheet,
-  ExtendedSheet
+  ExtendedSheet["rows"],
+  number | undefined,
+  ExtendedSheet["rows"],
+  number | undefined,
+  ExtendedSheet["rows"]
 >(
-  sheet => sheet,
-  sheet => {
+  originalRows => originalRows,
+  (originalRows, quantityColumn) => quantityColumn,
+  (originalRows, quantityColumn) => {
     const rows: ExtendedSheet["rows"] = [];
 
-    sheet.rows.forEach(row => {
+    originalRows.forEach(row => {
       rows.push(row);
 
-      if (!sheet.quantityColumn) return;
+      if (!quantityColumn) return;
 
-      const quantity = row[sheet.quantityColumn];
+      const quantity = row[quantityColumn];
 
       if (!quantity) return;
 
@@ -46,10 +50,39 @@ export const rowsWithQuantity = createSelector<
       }
     });
 
-    return {
-      ...sheet,
-      rows
-    };
+    return rows;
+  }
+);
+
+export const rowsWithOption = createSelector<
+  ExtendedSheet["rows"],
+  string[] | undefined,
+  ExtendedSheet["rows"],
+  string[] | undefined,
+  RowWithOption[]
+>(
+  originalRows => originalRows,
+  (originalRows, options) => options,
+  (originalRows, options) => {
+    const rows: RowWithOption[] = [];
+
+    originalRows.forEach(row => {
+      if (options) {
+        options.forEach(option => {
+          rows.push({
+            option,
+            row
+          });
+        });
+      } else {
+        rows.push({
+          option: null,
+          row
+        });
+      }
+    });
+
+    return rows;
   }
 );
 
@@ -125,7 +158,8 @@ export const activeSpreadsheetSelector = createSelector<
         ...sheet,
         filter: spreadsheet.filters[sheet.title],
         designMap: spreadsheet.designMap[sheet.title],
-        quantityColumn: spreadsheet.quantityMap[sheet.title]
+        quantityColumn: spreadsheet.quantityMap[sheet.title],
+        options: spreadsheet.optionsMap && spreadsheet.optionsMap[sheet.title]
       }));
     }
 

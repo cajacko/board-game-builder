@@ -4,7 +4,11 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import { Value } from "../store/spreadsheets/types";
-import { Props as DesignProps, DesignComponent } from "../designs/types";
+import {
+  Props as DesignProps,
+  DesignComponent,
+  RowWithOption
+} from "../designs/types";
 import mmToPx from "../utils/mmToPx";
 import { v4 as uuidv4 } from "uuid";
 import { call } from "../utils/mainProcess";
@@ -22,7 +26,7 @@ const maxPrintSize = {
 
 interface Props {
   headings: Value[];
-  rows: Value[][];
+  rows: RowWithOption[];
   component: DesignComponent["component"] | null;
   columnMapping?: number[];
   expectedColumnorder: string[] | null;
@@ -30,19 +34,20 @@ interface Props {
 }
 
 const mappedRowSelector = createSelector<
-  Value[][],
+  RowWithOption[],
   Value[],
-  Value[][],
+  RowWithOption[],
   Value[],
   DesignProps[]
 >(
-  (rows: Value[][]): Value[][] => rows,
-  (rows: Value[][], headings: Value[]): Value[] => headings,
-  (rows: Value[][], headings: Value[]) => {
+  (rows: RowWithOption[]): RowWithOption[] => rows,
+  (rows: RowWithOption[], headings: Value[]): Value[] => headings,
+  (rows: RowWithOption[], headings: Value[]) => {
     return rows.map(row => {
       return {
-        columns: row,
-        headings: row.reduce((acc, value, i) => {
+        option: row.option,
+        columns: row.row,
+        headings: row.row.reduce((acc, value, i) => {
           const key = headings[i] ? `${headings[i]}` : `column${i + 1}`;
 
           return {
