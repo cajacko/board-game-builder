@@ -2,12 +2,13 @@ import styled from "styled-components";
 
 export const shadow = "box-shadow: 0 0 1mm black;";
 
+export const titleBarHeight = 10;
+
 export const TitleBar = styled.div`
   display: flex;
-  height: 14mm;
   background-color: #eceff1;
   align-items: center;
-  height: 10mm;
+  height: ${titleBarHeight}mm;
   ${shadow};
   position: relative;
   z-index: 2;
