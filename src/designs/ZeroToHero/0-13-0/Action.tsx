@@ -61,10 +61,12 @@ const Footer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: space-between;
+  z-index: 2;
+  height: 8mm;
   ${shadow};
 `;
 
-const levelSize = (titleBarHeight * 7) / 4;
+const levelSize = (titleBarHeight * 8) / 4;
 const levelPosition = -levelSize / 3;
 
 const Level = styled.span`

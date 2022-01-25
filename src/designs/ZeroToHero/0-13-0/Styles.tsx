@@ -23,9 +23,12 @@ export const ContainerForSidebar = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   background-size: cover;
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   z-index: 1;
   background-position: center;
+  width: 100%;
 `;
 
 export const Sidebar = styled.div`
@@ -33,10 +36,11 @@ export const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   ${shadow};
-  position: relative;
+  position: absolute;
   z-index: 2;
-  margin-top: -10mm;
-  width: 10mm;
+  top: 0;
+  bottom: 0;
+  width: 13mm;
 `;
 
 export const sidebarIconStyle = { fontSize: "5.5mm", marginRight: "0.5mm" };
@@ -51,7 +55,7 @@ export const SidebarItem = styled.span<{ hide?: boolean }>`
   flex-direction: column;
   opacity: ${({ hide }) => (hide ? 0 : 1)};
   font-size: ${sidebarItemFontSize}mm;
-  padding-top: 15mm;
+  padding-top: 17mm;
   padding-bottom: 3mm;
 
   * {
