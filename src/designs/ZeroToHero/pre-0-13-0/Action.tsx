@@ -15,8 +15,8 @@ import {
   faCogs,
   faMeteor,
 } from "@fortawesome/free-solid-svg-icons";
-import { Props } from "../types";
-import PokerCard from "../PokerCard";
+import { Props } from "../../types";
+import PokerCard from "../../PokerCard";
 import {
   TitleBar,
   Title,
@@ -165,14 +165,17 @@ function Card(props: Props) {
     defense,
     charge,
     level,
-    ability,
+    _ability,
     abilityCost,
-    upgradeCost,
     hasStrength,
     hasSpeed,
     hasTech,
     hasMystic,
+    quantity,
+    upgradeCost,
   ] = props.columns;
+
+  const ability = " ";
 
   return (
     <PokerCard>
@@ -301,10 +304,11 @@ export default {
     "Level",
     "Ability",
     "Ability Charge Cost",
-    "Upgrade Cost",
     "Has Strength",
     "Has Speed",
     "Has Tech",
     "Has Mystic",
+    "Quantity",
+    "Upgrade Cost",
   ],
 };

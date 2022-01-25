@@ -4,8 +4,8 @@ import CasinoIcon from "@material-ui/icons/Casino";
 import ControlCameraIcon from "@material-ui/icons/ControlCamera";
 import AttachMoneyIcon from "@material-ui/icons/Security";
 import FlashOnIcon from "@material-ui/icons/FlashOn";
-import { Props } from "../types";
-import PokerCard from "../PokerCard";
+import { Props } from "../../types";
+import PokerCard from "../../PokerCard";
 import {
   TitleBar,
   Title,

@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import FlashOnIcon from "@material-ui/icons/FlashOn";
-import { Props } from "../types";
-import PokerCardSquare from "../PokerCardSquare";
+import { Props } from "../../types";
+import PokerCardSquare from "../../PokerCardSquare";
 import { TitleBar, Title, ContainerForSidebar } from "./Styles";
 
 const Wrapper = styled.div`
@@ -119,6 +119,6 @@ export default {
     "Energy",
     "Resources",
     "Effect",
-    "Level"
-  ]
+    "Level",
+  ],
 };

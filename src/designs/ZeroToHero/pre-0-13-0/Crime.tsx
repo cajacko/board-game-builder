@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Props } from "../types";
-import PokerCardHex, { height } from "../PokerCardHex";
+import { Props } from "../../types";
+import PokerCardHex, { height } from "../../PokerCardHex";
 
 const Title = styled.span<{ villain: boolean }>`
   width: 36mm;
@@ -15,7 +15,7 @@ const Title = styled.span<{ villain: boolean }>`
   position: relative;
   z-index: 4;
   border-radius: 1.5mm;
-  border: 0.4mm solid #b3b3b3;
+  border: 0.4mm solid ${({ villain }) => (villain ? "#EF5350" : "#b3b3b3")};
   box-sizing: border-box;
 `;
 
@@ -35,7 +35,7 @@ const Dot = styled.div<{ color: string }>`
 const DotContainer = styled.div<{ borderColor: string }>`
   display: flex;
   flex-direction: row;
-  border-bottom: ${borderSize}mm solid #b3b3b3;
+  border-bottom: ${borderSize}mm solid ${({ borderColor }) => borderColor};
   flex: 1;
   justify-content: center;
 `;
@@ -49,9 +49,7 @@ const Target = styled.span<{ villain: boolean }>`
   width: 10mm;
   display: flex;
   border-radius: 100%;
-  /* background-color: ${({ villain }) => (villain ? "#EF5350" : "#546e7a")}; */
-  background-color: white;
-  border: 0.4mm solid #b3b3b3;
+  background-color: ${({ villain }) => (villain ? "#EF5350" : "#546e7a")};
   color: white;
   box-sizing: border-box;
   font-size: 6mm;
@@ -78,8 +76,7 @@ const Value = styled.span`
   width: 7mm;
   display: flex;
   border-radius: 100%;
-  background-color: white;
-  border: 0.4mm solid #b3b3b3;
+  background-color: #d0d0d0;
   box-sizing: border-box;
   font-size: 4mm;
   align-items: center;
@@ -197,7 +194,7 @@ function Card(props: Props) {
             side={1}
             style={{
               width: `${height}mm`,
-              // backgroundImage: `url(${backgroundImage})`,
+              backgroundImage: `url(${backgroundImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               bottom: "5mm",
@@ -215,26 +212,30 @@ function Card(props: Props) {
                     <Victory src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Star_icon_stylized.svg/1024px-Star_icon_stylized.svg.png" />
                   </VictoryContainer>
                 )}
-                <Title villain={!!villain}></Title>
+                <Title villain={!!villain}>{title || "Crime Title"}</Title>
               </TitleContainer>
               <Values>
                 <Value
                   style={{
                     marginRight: `-${valueMargin}mm`,
-                    // backgroundColor: "#80DEEA",
+                    backgroundColor: "#80DEEA",
                   }}
-                ></Value>
+                >
+                  {exp}
+                </Value>
                 <Target villain={!!villain}>{thwartTarget}</Target>
                 <Value
                   style={{
                     marginLeft: `-${valueMargin}mm`,
-                    // backgroundColor: "#EF5350",
+                    backgroundColor: "#EF5350",
                     opacity: typeof threat !== "number" ? 0 : 1,
                   }}
-                ></Value>
+                >
+                  {threat}
+                </Value>
               </Values>
               <Values style={{ zIndex: 5 }}>
-                <Target villain={!!villain}></Target>
+                <Target villain={!!villain}>{thwartTarget}</Target>
               </Values>
             </Content>
           </Side>

@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import ShuffleIcon from "@material-ui/icons/Shuffle";
-import { Props } from "../types";
-import PokerCard from "../PokerCard";
+import { Props } from "../../types";
+import PokerCard from "../../PokerCard";
 import { TitleBar, Title, ContainerForSidebar } from "./Styles";
 
 const Wrapper = styled.div`
@@ -41,5 +41,5 @@ function Card(props: Props) {
 
 export default {
   component: Card,
-  expectedColumnOrder: ["ID", "Location", "Has Shuffle", "Image"]
+  expectedColumnOrder: ["ID", "Location", "Has Shuffle", "Image"],
 };

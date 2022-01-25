@@ -5,8 +5,8 @@ import ControlCameraIcon from "@material-ui/icons/ControlCamera";
 import SyncAltIcon from "@material-ui/icons/SyncAlt";
 import BuildIcon from "@material-ui/icons/Build";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import { Props, DesignComponent } from "../types";
-import PokerCard from "../PokerCard";
+import { Props, DesignComponent } from "../../types";
+import PokerCard from "../../PokerCard";
 import {
   TitleBar,
   Title,
@@ -14,7 +14,7 @@ import {
   Sidebar,
   SidebarItem,
   shadow,
-  sidebarIconStyle
+  sidebarIconStyle,
 } from "./Styles";
 
 const Wrapper = styled.div`
@@ -186,8 +186,8 @@ const designComponent: DesignComponent = {
     "Level 3a Title",
     "Level 3a Image",
     "Level 3b Title",
-    "Level 3b Image"
-  ]
+    "Level 3b Image",
+  ],
 };
 
 export default designComponent;

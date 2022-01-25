@@ -1,4 +1,5 @@
-import { Designs } from "../types";
+import { Designs } from "../../types";
+import prependDesignNames from "../../prependDesignNames";
 import Crime from "./Crime";
 import CrimeBlank from "./CrimeBlank";
 import Action from "./Action";
@@ -17,4 +18,4 @@ const designs: Designs = {
   ActionBlank,
 };
 
-export default designs;
+export default prependDesignNames("Pre 0.13.0-", designs);
