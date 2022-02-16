@@ -66,7 +66,7 @@ function Card(props: Props) {
   }
 
   if (resources && typeof resources === "number") {
-    for (var i = 0; i < resources; i += 1) {
+    for (var j = 0; j < resources; j += 1) {
       resourceComponents.push(<AttachMoneyIcon style={iconStyle} />);
     }
   }

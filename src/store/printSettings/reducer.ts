@@ -4,6 +4,7 @@ import * as actions from "./actions";
 export interface State {
   height: number;
   width: number;
+  itemsPerPage: number | null;
 }
 
 const reducer = createReducer<State | null>(null).handleAction(

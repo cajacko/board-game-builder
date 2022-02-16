@@ -3,11 +3,12 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import { Value } from "../store/spreadsheets/types";
 import {
   Props as DesignProps,
   DesignComponent,
-  RowWithOption
+  RowWithOption,
 } from "../designs/types";
 import mmToPx from "../utils/mmToPx";
 import { v4 as uuidv4 } from "uuid";
@@ -21,7 +22,7 @@ import windowId from "../config/windowId";
 // In mm. This is the A4 size for my printer
 const maxPrintSize = {
   width: 201,
-  height: 288
+  height: 288,
 };
 
 interface Props {
@@ -43,7 +44,7 @@ const mappedRowSelector = createSelector<
   (rows: RowWithOption[]): RowWithOption[] => rows,
   (rows: RowWithOption[], headings: Value[]): Value[] => headings,
   (rows: RowWithOption[], headings: Value[]) => {
-    return rows.map(row => {
+    return rows.map((row) => {
       return {
         option: row.option,
         columns: row.row,
@@ -52,9 +53,9 @@ const mappedRowSelector = createSelector<
 
           return {
             ...acc,
-            [key]: value
+            [key]: value,
           };
-        }, {})
+        }, {}),
       };
     });
   }
@@ -99,14 +100,27 @@ function Design({
   rows,
   component: Component,
   columnMapping,
-  expectedColumnorder
+  expectedColumnorder,
 }: Props) {
   const allMappedRows = mappedRowSelector(rows, headings);
   const printSettings = useSelector(({ printSettings }) => printSettings);
   const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
+  const [itemsPerPageValue, setItemsPerPage] = React.useState<string>("");
+
+  let itemsPerPage =
+    itemsPerPageValue.trim() === "" ? null : parseInt(itemsPerPageValue);
+
+  if (typeof itemsPerPage === "number" && Number.isNaN(itemsPerPage)) {
+    itemsPerPage = null;
+  }
+
+  const printSettingsItemsPerPage = printSettings?.itemsPerPage;
+
   const [start, setStart] = React.useState(0);
   const [visibleCount, setVisibleCount] = React.useState<number>(
-    allMappedRows.length
+    typeof printSettingsItemsPerPage === "number"
+      ? printSettingsItemsPerPage
+      : allMappedRows.length
   );
 
   const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -116,8 +130,14 @@ function Design({
     if (!onlyShowVisible) return;
     if (!ref.current) return;
 
-    if (onlyShowVisible) setVisibleCount(getVisibleCount(ref.current.children));
-  }, [setVisibleCount, onlyShowVisible, ref]);
+    if (onlyShowVisible) {
+      setVisibleCount(
+        typeof printSettingsItemsPerPage === "number"
+          ? printSettingsItemsPerPage
+          : getVisibleCount(ref.current.children)
+      );
+    }
+  }, [setVisibleCount, onlyShowVisible, ref, printSettingsItemsPerPage]);
 
   React.useEffect(() => {
     if (!printSettings) return;
@@ -134,7 +154,7 @@ function Design({
 
       if (s > allMappedRows.length) return Promise.resolve();
 
-      return new Promise(resolve => setTimeout(resolve, 1000))
+      return new Promise((resolve) => setTimeout(resolve, 1000))
         .then(() => {
           if (!windowId) return Promise.resolve();
           if (!printSettings) return Promise.resolve();
@@ -146,14 +166,14 @@ function Design({
             x: 0,
             y: 0,
             filename: `${s + 1}-${e}`,
-            directory: dir
+            directory: dir,
           });
         })
         .then(() => {
           s = e;
           setStart(e);
 
-          return new Promise(resolve => setTimeout(resolve, 500));
+          return new Promise((resolve) => setTimeout(resolve, 500));
         })
         .then(loop);
     }
@@ -187,13 +207,13 @@ function Design({
       width,
       show: false,
       // show: true,
-      url: window.location.href
+      url: window.location.href,
     })
       .then(() =>
         dispatchActionToWindow(
           windowId,
           actions.isPrintWindow.setIsPrintWindow({
-            isPrintWindow: true
+            isPrintWindow: true,
           })
         )
       )
@@ -202,14 +222,15 @@ function Design({
           windowId,
           actions.printSettings.setPrintSettings({
             height,
-            width
+            width,
+            itemsPerPage,
           })
         )
       );
   }
 
   // TODO: selector for this
-  visibleMappedRows = visibleMappedRows.map(row => {
+  visibleMappedRows = visibleMappedRows.map((row) => {
     if (!expectedColumnorder) return row;
     if (!columnMapping) return row;
 
@@ -225,7 +246,7 @@ function Design({
 
     return {
       ...row,
-      columns
+      columns,
     };
   });
 
@@ -239,6 +260,13 @@ function Design({
         >
           Save as Images
         </Button>
+        <TextField
+          value={itemsPerPage}
+          type="number"
+          onChange={(event) => setItemsPerPage(event.target.value)}
+          label="Items per page"
+          style={{ marginLeft: 10 }}
+        />
         {visibleMappedRows.length === 0 && <div>No Items</div>}
       </NoPrint>
       <Container className="print" ref={ref}>
