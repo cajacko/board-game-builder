@@ -4,16 +4,19 @@ export const shadow = "box-shadow: 0 0 1mm black;";
 
 export const titleBarHeight = 10;
 
-export const TitleBar = styled.div`
+export const TitleBar = styled.div<{ $hasTitle?: boolean }>`
   display: flex;
   align-items: center;
   height: ${titleBarHeight}mm;
   position: relative;
   z-index: 2;
+
+  background-color: #eceff1;
+  ${shadow};
 `;
 
 export const Title = styled.span`
-  font-size: 4mm;
+  font-size: 3.5mm;
   margin: 0 3mm;
 `;
 

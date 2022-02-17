@@ -34,6 +34,15 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffffb8;
+`;
+
 const ID = styled.div`
   font-size: 3mm;
 `;
@@ -47,12 +56,12 @@ const EffectChargeCost = styled.div`
 const effectHorizontalMargin = 2;
 
 const Effect = styled.div`
-  background-color: white;
+  background-color: #fffffff0;
   position: absolute;
   bottom: 14mm;
   left: ${effectHorizontalMargin + 13}mm;
   right: ${effectHorizontalMargin}mm;
-  top: 34mm;
+  top: 52mm;
   font-size: 3.5mm;
   padding: 5mm;
   display: flex;
@@ -90,22 +99,22 @@ const Footer = styled.div`
   ${shadow};
 `;
 
-const levelSize = (titleBarHeight * 8) / 4;
+const levelSize = (titleBarHeight * 9) / 4;
 const levelPosition = -levelSize / 3;
 
-const Level = styled.span`
+const Level = styled.span<{ $isGadget?: boolean }>`
   position: absolute;
   top: ${levelPosition}mm;
   left: ${levelPosition}mm;
   height: ${levelSize}mm;
   width: ${levelSize}mm;
-  background-color: white;
+  background-color: ${({ $isGadget }) => ($isGadget ? "#fbcccc" : "#bce0ff")};
   color: black;
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  padding-bottom: 4mm;
-  padding-right: 5.5mm;
+  padding-bottom: 5.5mm;
+  padding-right: 6.5mm;
   border-radius: 50%;
   box-shadow: 0px 0px 2mm black;
   box-sizing: border-box;
@@ -178,18 +187,43 @@ function Card(props: Props) {
     charge,
   ] = props.columns;
 
+  let effectTop = 52;
+
+  if (typeof effect === "string") {
+    if (effect.length > 200) {
+      effectTop = 30;
+    } else if (effect.length > 150) {
+      effectTop = 36;
+    } else if (effect.length > 125) {
+      effectTop = 41;
+    } else if (effect.length > 100) {
+      effectTop = 46;
+    } else if (effect.length > 80) {
+      effectTop = 50;
+    }
+  }
+
   return (
     <PokerCard>
-      <Wrapper>
-        <TitleBar>
+      <Wrapper
+        style={{
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundImage:
+            "url('https://previews.123rf.com/images/sergeypykhonin/sergeypykhonin1801/sergeypykhonin180100118/94341416-fist-punching-or-strong-punch-drawn-in-pop-art-retro-comic-style-cartoon-vector-illustration.jpg')",
+        }}
+      >
+        <Overlay />
+        <TitleBar $hasTitle={!!cardName}>
           {typeof level === "number" && (
-            <Level>
+            <Level $isGadget={type === "Gadget"}>
               {level}
-              <div style={{ fontSize: "3mm" }}>
+              <div style={{ fontSize: "4mm" }}>
                 {type === "Gadget" ? "g" : "a"}
               </div>
             </Level>
           )}
+          {cardName && <Title style={{ marginLeft: "17mm" }}>{cardName}</Title>}
         </TitleBar>
         <ContainerForSidebar>
           <Sidebar>
@@ -225,7 +259,7 @@ function Card(props: Props) {
           </Sidebar>
 
           {effect && effect !== "N/A" && (
-            <Effect>
+            <Effect style={{ top: `${effectTop}mm` }}>
               {effect}
               {typeof chargeCost === "number" && (
                 <EffectChargeCost>
@@ -263,10 +297,10 @@ function Card(props: Props) {
               )}
             </Categories>
             <ID>#{id}</ID>
-            <ID>
+            <ID style={{ color: type === "Gadget" ? "red" : "blue" }}>
               {typeof cardCost === "number"
                 ? `${cardCost} ${
-                    type === "Gadget" ? "resources" : "experience"
+                    type === "Gadget" ? "resources 📦" : "experience"
                   }`
                 : ""}
             </ID>
