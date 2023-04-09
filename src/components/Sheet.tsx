@@ -249,8 +249,6 @@ function Sheet() {
     sheet && sheet.designMap && sheet.designMap.columnMapping;
   const headings = sheet && sheet.headings;
 
-  console.log("sheet.options", sheet, sheet && sheet.options);
-
   const handleOptionChange = (option: string, checked: boolean) => () => {
     if (!sheet) return;
     if (!spreadsheetId) return;

@@ -1,8 +1,10 @@
 import { Designs } from "../types";
-import ClingyPenguin from "./ClingyPenguin";
+import { center, left, right } from "./ClingyPenguin";
 
 const designs: Designs = {
-  ClingyPenguin,
+  ClingyPenguinTopic: center,
+  ClingyPenguinAdjective: right,
+  ClingyPenguinCharacter: left,
 };
 
 export default designs;

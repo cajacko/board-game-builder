@@ -6,7 +6,7 @@ import {
   useHistory,
   useRouteMatch,
   Switch,
-  matchPath
+  matchPath,
 } from "react-router-dom";
 import styled from "styled-components";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
@@ -59,10 +59,8 @@ function Router() {
   const routerMatch = useRouteMatch<Match>();
   const match =
     routes
-      .map(props => matchPath<Match>(window.location.pathname, props))
-      .find(x => !!x) || routerMatch;
-
-  console.log(match);
+      .map((props) => matchPath<Match>(window.location.pathname, props))
+      .find((x) => !!x) || routerMatch;
 
   const hasHistory = !!history.length;
 
@@ -149,7 +147,7 @@ function Router() {
         </BreadCrumbContainer>
       </NoPrint>
       <Switch>
-        {routes.map(route => (
+        {routes.map((route) => (
           <Route {...route} />
         ))}
       </Switch>
