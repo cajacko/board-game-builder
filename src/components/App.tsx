@@ -5,15 +5,15 @@ import { PersistGate } from "redux-persist/integration/react";
 import { BrowserRouter } from "react-router-dom";
 import { store, persistor } from "../store";
 import Router from "./Router";
+import NoPrint from "./NoPrint";
 
-const Global = createGlobalStyle`
+const Global = createGlobalStyle<{ $hasBackground: boolean }>`
   html, body {
-    background: #ffffff;
+    background: ${(props) =>
+      props.$hasBackground ? "#ffffff" : "transparent"};
     padding: 0;
     margin: 0;
   }
-
-  
 `;
 
 function App() {
@@ -21,8 +21,14 @@ function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <Global />
-          <Router />
+          <NoPrint>
+            {(isPrintWindow) => (
+              <>
+                <Global $hasBackground={!isPrintWindow} />
+                <Router />
+              </>
+            )}
+          </NoPrint>
         </BrowserRouter>
       </PersistGate>
     </Provider>

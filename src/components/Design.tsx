@@ -102,6 +102,7 @@ function Design({
   columnMapping,
   expectedColumnorder,
 }: Props) {
+  const designRef = React.useRef<HTMLDivElement>(null);
   const allMappedRows = mappedRowSelector(rows, headings);
   const printSettings = useSelector(({ printSettings }) => printSettings);
   const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
@@ -195,11 +196,15 @@ function Design({
     visibleMappedRows = allMappedRows.slice(start, start + visibleCount);
   }
 
-  function screenshot() {
+  function screenshot(props: {
+    height: number;
+    width: number;
+    unit: "mm" | "px";
+  }) {
     const windowId = uuidv4();
 
-    const height = mmToPx(maxPrintSize.height);
-    const width = mmToPx(maxPrintSize.width);
+    const height = props.unit === "px" ? props.height : mmToPx(props.height);
+    const width = props.unit === "px" ? props.width : mmToPx(props.width);
 
     call<Types.CREATE_WINDOW>("CREATE_WINDOW", {
       windowId,
@@ -250,15 +255,32 @@ function Design({
     };
   });
 
+  const designSize = designRef.current?.getBoundingClientRect();
+
   return (
     <>
       <NoPrint>
+        {designSize && (
+          <Button
+            onClick={() =>
+              screenshot({
+                height: designSize.height,
+                width: designSize.width,
+                unit: "px",
+              })
+            }
+            variant="contained"
+            style={{ marginBottom: 20, marginTop: 20, marginRight: 20 }}
+          >
+            Save as image per design
+          </Button>
+        )}
         <Button
-          onClick={screenshot}
+          onClick={() => screenshot({ ...maxPrintSize, unit: "mm" })}
           variant="contained"
           style={{ marginBottom: 20, marginTop: 20 }}
         >
-          Save as Images
+          Save as A4 images
         </Button>
         <TextField
           value={itemsPerPage}
@@ -271,9 +293,9 @@ function Design({
       </NoPrint>
       <Container className="print" ref={ref}>
         {visibleMappedRows.map((row, i) => (
-          <React.Fragment key={i}>
+          <div key={i} ref={i === 0 ? designRef : undefined}>
             <Component {...row} />
-          </React.Fragment>
+          </div>
         ))}
       </Container>
     </>

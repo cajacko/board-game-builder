@@ -9,7 +9,7 @@ import { sheetSelector } from "../store/spreadsheets/selectors";
 import {
   filterRows,
   rowsWithQuantity,
-  rowsWithOption
+  rowsWithOption,
 } from "../store/spreadsheets/selectors";
 import { ExtendedSheet } from "../store/spreadsheets/types";
 import SaveIcon from "@material-ui/icons/Save";
@@ -23,7 +23,7 @@ import useFetchSpreadSheet from "../hooks/useFetchSpreadSheet";
 import Table from "./Table";
 import Design from "./Design";
 import actions from "../store/actions";
-import designs from "../designs";
+import designs from "../designs/";
 import { Designs, DesignComponent } from "../designs/types";
 import NoPrint from "../components/NoPrint";
 import Status from "./Status";
@@ -32,7 +32,7 @@ import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
 import { join } from "path";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     position: "absolute",
     width: 400,
@@ -42,8 +42,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 4, 3),
     top: "0px",
     bottom: "0px",
-    height: 500
-  }
+    height: 500,
+  },
 }));
 
 function getModalStyle() {
@@ -54,7 +54,7 @@ function getModalStyle() {
     top: `${top}%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
-    overflow: "scroll"
+    overflow: "scroll",
   };
 }
 
@@ -111,7 +111,7 @@ function Sheet() {
   }>();
   const spreadsheetId = match.params.spreadsheetId;
   const isPrintWindow = useSelector(({ isPrintWindow }) => isPrintWindow);
-  const sheet = useSelector(state =>
+  const sheet = useSelector((state) =>
     sheetSelector(state, match)
   ) as ExtendedSheet | null;
   const status = useFetchSpreadSheet();
@@ -151,7 +151,7 @@ function Sheet() {
         sheetColumn:
           e.target.value === "null" ? null : parseInt(e.target.value, 10),
         sheetTitle: sheet.title,
-        spreadsheetTitle: spreadsheetId
+        spreadsheetTitle: spreadsheetId,
       })
     );
   };
@@ -166,7 +166,7 @@ function Sheet() {
       actions.spreadsheets.setDesign({
         component: design,
         sheetTitle: sheet.title,
-        spreadsheetTitle: spreadsheetId
+        spreadsheetTitle: spreadsheetId,
       })
     );
   };
@@ -180,7 +180,7 @@ function Sheet() {
         sheetTitle: sheet.title,
         spreadsheetTitle: spreadsheetId,
         expectedColumn: i,
-        sheetColumn: parseInt(e.target.value, 10)
+        sheetColumn: parseInt(e.target.value, 10),
       })
     );
   };
@@ -193,7 +193,7 @@ function Sheet() {
       actions.spreadsheets.setFilter({
         filter,
         sheetTitle: sheet.title,
-        spreadsheetTitle: spreadsheetId
+        spreadsheetTitle: spreadsheetId,
       })
     );
   };
@@ -214,7 +214,7 @@ function Sheet() {
   const components: string[] = [];
 
   const loop = (items: Designs, parent?: string) => {
-    Object.keys(items).forEach(key => {
+    Object.keys(items).forEach((key) => {
       const nextParent = parent ? `${parent}.${key}` : key;
       const design = items[key];
 
@@ -264,14 +264,14 @@ function Sheet() {
         options.push(option);
       }
     } else {
-      options = options.filter(o => o !== option);
+      options = options.filter((o) => o !== option);
     }
 
     dispatch(
       actions.spreadsheets.setOptions({
         options,
         spreadsheetTitle: spreadsheetId,
-        sheetTitle: sheet.title
+        sheetTitle: sheet.title,
       })
     );
   };
@@ -310,7 +310,7 @@ function Sheet() {
                 id="filter"
                 label="e.g: data['Column 1 Heading'] > 3 && !!data['Column 2 Heading']"
                 value={filter}
-                onChange={e => setFilter(e.target.value)}
+                onChange={(e) => setFilter(e.target.value)}
                 style={{ width: 600 }}
               />
               <IconButton onClick={applyFilter}>
@@ -365,7 +365,7 @@ function Sheet() {
                     <Typography variant="h6" component="h2">
                       Options:
                     </Typography>
-                    {component.options.map(option => {
+                    {component.options.map((option) => {
                       const checked =
                         !!sheet &&
                         !!sheet.options &&
@@ -414,7 +414,7 @@ function Sheet() {
               >
                 <div style={modalStyle} className={classes.paper}>
                   <ul>
-                    {components.map(text => (
+                    {components.map((text) => (
                       <li key={text}>
                         <ComponentButton onClick={applyDesign(text)}>
                           <Typography>{text}</Typography>
